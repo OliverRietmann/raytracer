@@ -2,8 +2,8 @@ class Object:
     def intersect(self, ray):
         pass
 
-    def normal_at(surface_point):
+    def get_normal(self, p):
         pass
 
-    def transform(matrix):
+    def transform(self, matrix):
         pass

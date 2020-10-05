@@ -21,7 +21,7 @@ class Camera:
         pixelsize = 2.0 * tan(0.5 * self.angle) / self.pixels_x;
         
         for i in range(self.pixels_y):
-            dy = (i - 0.5 * (self.pixels_y - 1)) * pixelsize * w
+            dy = (i - 0.5 * (self.pixels_y - 1)) * pixelsize * h
             for j in range(self.pixels_x):
-                dx = (0.5 * (self.pixels_x - 1) - j) * pixelsize * h
+                dx = (j - 0.5 * (self.pixels_x - 1)) * pixelsize * w
                 yield (Ray(self.position, direction + dx + dy), i, j)
