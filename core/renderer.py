@@ -14,11 +14,15 @@ def shader(p, current_object, lightsource, object_list):
     for obj in object_list:
         t = min(t, obj.intersect(lightray))
     #TODO: Find better solution that hardcoded epsilon 0.0001
+    diffuse_coefficient = 0.0
     if t < inf and norm(p - lightray(t)) < 0.0001:
         normal = current_object.get_normal(p)
         light_direction = normalize(lightray.direction)
-        factor = inner(normal, -light_direction)
-        return current_object.color * clip(factor, 0.0, 1.0)
+        diffuse_coefficient = inner(normal, -light_direction)
+        diffuse_coefficient = clip(diffuse_coefficient, 0.0, 1.0)
+
+    properties = current_object.properties
+    return properties.color * (properties.ambient + properties.diffuse * diffuse_coefficient)
 
 class Renderer:
     def __init__(self, camera):
@@ -37,8 +41,8 @@ class Renderer:
                     nearest_obj = obj
             if (t < inf):
                 self.rgb_data[i, j] = shader(ray(t), nearest_obj, lightsource, object_list)
-                if max(self.rgb_data[i, j]) > 1.0 or min(self.rgb_data[i, j]) < 0.0:
-                    print(self.rgb_data[i, j], i, j)
+                #if max(self.rgb_data[i, j]) > 1.0 or min(self.rgb_data[i, j]) < 0.0:
+                #    print(self.rgb_data[i, j], i, j)
 
     def save_image(self, filename):
         x = self.camera.pixels_x

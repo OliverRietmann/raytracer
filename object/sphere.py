@@ -7,10 +7,10 @@ def normalize(vector):
     return vector / norm(vector)
 
 class Sphere(Object):
-    def __init__(self, color, m, r):
+    def __init__(self, m, r, properties):
         self.m = m
         self.r = r
-        self.color = color
+        self.properties = properties
 
     def intersect(self, ray):
         v = ray.origin
