@@ -1,28 +1,25 @@
 from numpy import array, inf, inner, sqrt
 from numpy.linalg import norm
 
-from object.object import Object
-
-def normalize(vector):
-    return vector / norm(vector)
+from object.object import Object, normalize
 
 class Sphere(Object):
     def __init__(self, m, r, properties):
+        super().__init__(properties)
         self.m = m
         self.r = r
-        self.properties = properties
 
     def intersect(self, ray):
         v = ray.origin
         w = ray.direction
-        
+
         a = inner(w, w)
         vm = v - self.m
         b = 2.0 * inner(vm, w)
         c = inner(vm, vm) - self.r**2
-        
+
         d = b**2 - 4.0 * a * c
-        
+
         if d >= 0.0:
             t0 = (-b - sqrt(d)) / (2.0 * a)
             t1 = (-b + sqrt(d)) / (2.0 * a)

@@ -1,28 +1,6 @@
-from numpy import array, clip, inf, inner, zeros
-from numpy.linalg import norm
-from numpy.random import rand
+from numpy import inf, zeros
+#from numpy.random import rand
 from matplotlib.pyplot import figure, imshow, savefig, subplots_adjust
-
-from core.ray import Ray
-
-def normalize(vector):
-    return vector / norm(vector)
-
-def shader(p, current_object, lightsource, object_list):
-    lightray = Ray(lightsource, p - lightsource)
-    t = inf
-    for obj in object_list:
-        t = min(t, obj.intersect(lightray))
-    #TODO: Find better solution that hardcoded epsilon 0.0001
-    diffuse_coefficient = 0.0
-    if t < inf and norm(p - lightray(t)) < 0.0001:
-        normal = current_object.get_normal(p)
-        light_direction = normalize(lightray.direction)
-        diffuse_coefficient = inner(normal, -light_direction)
-        diffuse_coefficient = clip(diffuse_coefficient, 0.0, 1.0)
-
-    properties = current_object.properties
-    return properties.color * (properties.ambient + properties.diffuse * diffuse_coefficient)
 
 class Renderer:
     def __init__(self, camera):
@@ -40,7 +18,7 @@ class Renderer:
                     t = s
                     nearest_obj = obj
             if (t < inf):
-                self.rgb_data[i, j] = shader(ray(t), nearest_obj, lightsource, object_list)
+                self.rgb_data[i, j] = nearest_obj.shader(ray(t), lightsource, object_list)
                 #if max(self.rgb_data[i, j]) > 1.0 or min(self.rgb_data[i, j]) < 0.0:
                 #    print(self.rgb_data[i, j], i, j)
 
