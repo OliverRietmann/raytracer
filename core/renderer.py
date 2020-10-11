@@ -1,6 +1,8 @@
-from numpy import inf, zeros
+from numpy import zeros
 #from numpy.random import rand
 from matplotlib.pyplot import figure, imshow, savefig, subplots_adjust
+
+from core.tracer import get_nearest_obstacle
 
 class Renderer:
     def __init__(self, camera):
@@ -10,15 +12,9 @@ class Renderer:
 
     def __call__(self, lightsource, object_list):
         for ray, i, j in self.camera.get_ray_indices():
-            t = inf
-            nearest_obj = None
-            for obj in object_list:
-                s = obj.intersect(ray)
-                if (s < t):
-                    t = s
-                    nearest_obj = obj
-            if (t < inf):
-                self.rgb_data[i, j] = nearest_obj.shader(ray(t), lightsource, object_list)
+            obj, t = get_nearest_obstacle(ray, object_list)
+            if obj is not None:
+                self.rgb_data[i, j] = obj.shader(ray(t), ray.direction, lightsource, object_list)
                 #if max(self.rgb_data[i, j]) > 1.0 or min(self.rgb_data[i, j]) < 0.0:
                 #    print(self.rgb_data[i, j], i, j)
 

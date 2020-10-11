@@ -1,5 +1,4 @@
-from numpy import array, inf, inner, sqrt
-from numpy.linalg import norm
+from numpy import inf, inner
 
 from object.object import Object, normalize
 
