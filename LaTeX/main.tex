@@ -14,15 +14,20 @@
 \usepackage[ruled,vlined]{algorithm2e}
 \usepackage{subcaption}
 \usepackage{listings}
-\usepackage{listings}
 \usepackage{color}
+
+\theoremstyle{definition}
+\newtheorem{aufgabe}{Aufgabe}
+
+\theoremstyle{definition}
+\newtheorem*{losung*}{Lösung}
 
 \definecolor{mygreen}{rgb}{0,0.6,0}
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 \definecolor{lightgray}{rgb}{0.9,0.9,0.9}
 
-\lstset{ 
+\lstset{
 	backgroundcolor=\color{lightgray},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
 	basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
 	breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
@@ -47,8 +52,11 @@
 	showtabs=false,                  % show tabs within strings adding particular underscores
 	stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
 	stringstyle=\color{mymauve},     % string literal style
-	tabsize=2,	                     % sets default tabsize to 2 spaces
-	title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+	tabsize=4,	                     % sets default tabsize to 2 spaces
+	title=\lstname,                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+	rangeprefix=\#---,
+	rangesuffix=---,
+	includerangemarker=false
 }
 
 \pagestyle{empty}
@@ -56,8 +64,8 @@
 \begin{document}
 	\section*{Was ist Raytracing?}
 	Raytracing bezeichnet eine Methode zur Generierung von realistischen 3D Bildern.
-	Dabei kommen unter Anderem Reflexions- und Brechungsgesetze aus der Physik zur Anwendung.
-	Vorallem aber beruht die Technik auf der Vektorgeometrie wie man sie am Gymnasium unterrichtet.
+	Dabei kommen unter anderem Reflexions- und Brechungsgesetze aus der Physik zur Anwendung.
+	Vor allem aber beruht die Technik auf der Vektorgeometrie wie man sie am Gymnasium unterrichtet.
 	Die Idee ist folgende: Wir verteilen einige Objekte (Kugeln, Würfel, etc.) im dreidimensionalen Raum.
 	Wir nennen dies die Szene.
 	Nun stellt man irgendwo eine Kamera auf.
@@ -94,13 +102,73 @@
 	Die darin enthaltenen Klassen werden dann die verschiedenen Objekt-Typen wie Kugeln, Ebenen und dergleichen beschreiben.
 	Ohne hier weiter ins Detail zu gehen, werden wir nun unser erstes Bild generieren.
 
-	\section*{Das erste Bild}
+	\section*{Die Kugel}
 	Als Einstieg generieren wir ein Bild bestehend aus folgender Szene:
 	Eine Kamera befindet sich an den Koordinaten $(-1,0,1)$ und schaut in Richtung des Punktes $(0,0,1)$, das heisst entlang der x-Achse.
 	Zudem platzieren wir eine Kugel mit Mittelpunkt $(1,0,1)$ und Radius $1$.
 	Damit schaut die Kamera genau auf die Kugel.
 	Diese Szene entspricht dem Python-File \texttt{examples/getting\_startet.py}, welches wir nun ausführen. Anstatt eine Kugel sehen wir aber nur ein schwarzes Bild.
-	Um die Kugel auch zu sehen, müssen wir zuerst das File \texttt{object/sphere.py} bearbeiten.
+	Um die Kugel auch zu sehen, müssen wir zuerst das File \texttt{myobject/sphere.py} bearbeiten.
 	Genauer gesagt, muss die Funktion \texttt{intersect(self, ray)} vervollständigt werden.
-	\lstinputlisting[linerange={11-32}]{../object/sphere.py}% [linerange={37-45,48-50}]
+	Diese soll zu einem gegebenen Strahl dessen nächstgelegenen Schnittpunkt berechnen.
+	Man betrachte dazu Abbildung~\ref{fig:sphere_intersect}.
+	\begin{figure}[ht]
+		\centering
+		\includegraphics[width=0.5\textwidth]{images/sphere_intersect.pdf}
+		\caption{Schnittpunkt von Strahl und Kugel.}
+		\label{fig:sphere_intersect}
+	\end{figure}
+	\begin{aufgabe}\label{aufg:intersect_theory}
+		Gegeben Sei ein Strahl mit Ursprung $\vec{v}$ und Richtung $\vec{w}$.
+		Überlegen Sie sich die Kugel mit Mittelpunkt $\vec{m}$ und Radius $r$ schneidet.
+		Wie erhalten Sie in diesem Fall den Parameter $t>0$, so dass $\vec{v}+t\vec{w}$ gerade dem näherem der beiden Schnittpunkte entspricht?
+	\end{aufgabe}
+	\begin{losung*}
+		Ein beliebiger Punkt auf dem Strahl ist von der Form $\vec{v}+s\vec{w}$ für ein $s>0$.
+		So ein Punkt liegt auf der Kugeloberfläche genau dann wenn
+		\begin{equation*}
+			\lVert\vec{v}+s\vec{w}-\vec{m}\rVert^2=r^2,
+		\end{equation*}
+		also wenn er den Abstand $r$ zum Mittelpunkt hat.
+		Dies ist eine quadratische Gleichung in $s$, das heisst sie ist von der Form
+		\begin{equation*}
+			as^2+bs+c=0
+		\end{equation*}
+		für reelle Zahlen $a,b$ und $c$.
+		Durch einen Koeffizientenvergleich erhält man
+		\begin{equation*}
+			a=\rVert\vec{w}-\vec{m}\rVert^2,\quad
+			b=2\vec{v}\cdot(\vec{w}-\vec{m}),\quad
+			c=\lVert\vec{v}\rVert^2-r^2.
+		\end{equation*}
+		Falls $b^2-4ac>0$, so existieren genau zwei Schnittpunkte $v+t_1w$ und $v+t_2w$, wobei
+		\begin{equation*}
+			t_1=\frac{-b-\sqrt{b^2-4ac}}{2a}
+			\quad\text{und}\quad
+			t_2=\frac{-b+\sqrt{b^2-4ac}}{2a}.
+		\end{equation*}
+		Wir sind aber nur an positiven Lösungen interessiert, denn wir beschreiben einen Strahl und keine Gerade.
+		Sind $t_1$ und $t_2$ beide negativ, so schneidet der Strahl die Kugel nicht.
+		Andernfalls ist die kleinste positive Lösung der quadratischen Gleichung unsere Wahl für $t$.
+		Der nächstgelegene Schnittpunkt ist entsprechend $v+tw$.
+	\end{losung*}
+	\begin{aufgabe}\label{aufg:intersect_implementation}
+		Öffnen Sie nun das File \texttt{myobject/sphere.py} und implementieren Sie die Funktion \texttt{intersect(self, ray)} gemäss Ihren Überlegungen aus Aufgabe~\ref{aufg:intersect_theory}.
+		Lassen Sie anschliessend das Skript \texttt{examples/getting\_startet.py} nochmals laufen.
+		Nun sollten Sie die Kugel sehen.
+	\end{aufgabe}
+	\begin{losung*}
+		Die Lösung könnte zum Beipiel so aussehen:
+		\lstinputlisting[linerange=intersect-end]{../object/sphere.py}
+		Zusätzlich zu unserer Lösung von Aufgabe~\ref{aufg:intersect_theory} haben wir hier noch überprüft, ob der Strahl am Schnittpunkt in die Kugel eintritt (und nicht etwa austritt).
+		Nur diese Lösung lassen wir zu.
+		Wir werden später sehen, warum das nützlich ist.
+		Das so generierte Bild ist in Abbildung~\ref{fig:solution_sphere} gezeigt.
+		\begin{figure}[ht]
+			\centering
+			\includegraphics[width=0.5\textwidth]{images/getting_started.png}
+			\caption{Lösung der Aufgabe~\ref{aufg:intersect_implementation}.}
+			\label{fig:solution_sphere}
+		\end{figure}
+	\end{losung*}
 \end{document}

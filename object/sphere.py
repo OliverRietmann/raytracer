@@ -8,28 +8,26 @@ class Sphere(Object):
         self.m = m
         self.r = r
 
+    #---intersect---
     def intersect(self, ray):
         v = ray.origin
         w = ray.direction
 
         a = inner(w, w)
-        vm = v - self.m
-        b = 2.0 * inner(vm, w)
-        c = inner(vm, vm) - self.r**2
-
+        mv = v - self.m
+        b = 2.0 * inner(mv, w)
+        c = inner(mv, mv) - self.r**2
         d = b**2 - 4.0 * a * c
 
         if d >= 0.0:
             t0 = (-b - sqrt(d)) / (2.0 * a)
+            if t0 > 0.0 and inner(ray(t0) - self.m, w) < 0.0:
+                return t0
             t1 = (-b + sqrt(d)) / (2.0 * a)
-            if t0 < 0.0 and t1 < 0.0:
-                return inf
-            elif t0 * t1 < 0.0:
-                return max(t0, t1)
-            else:
-                return min(t0, t1)
-        else:
-            return inf
+            if t1 > 0.0 and inner(ray(t1) - self.m, w) < 0.0:
+                return t1
+        return inf
+    #---end---
 
     def get_normal(self, p):
         return normalize(p - self.m)
