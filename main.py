@@ -11,7 +11,7 @@ renderer = Renderer(camera)
 
 objects = []
 
-properties = Properties(array([1.0, 0.0, 0.0]), 0.2, 0.6, 0.2)
+properties = Properties(array([1.0, 0.0, 0.0]), 0.2, 0.8, 0.0)
 objects.append(Sphere(array([5.0, -1.0, 0.0]), 1.0, properties))
 
 properties = Properties(array([0.0, 0.0, 1.0]), 0.2, 0.6, 0.2)
