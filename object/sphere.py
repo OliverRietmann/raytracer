@@ -15,7 +15,7 @@ class Sphere(Object):
 
         a = inner(w, w)
         mv = v - self.m
-        b = 2.0 * inner(mv, w)
+        b = 2.0 * inner(w, mv)
         c = inner(mv, mv) - self.r**2
         d = b**2 - 4.0 * a * c
 
@@ -29,5 +29,7 @@ class Sphere(Object):
         return inf
     #---end---
 
+    #---normal---
     def get_normal(self, p):
         return normalize(p - self.m)
+    #---normalend---

@@ -29,8 +29,8 @@ class Sphere(Object):
     #---BEGIN get_normal---
     def get_normal(self, p):
         """
-        Ersetzen Sie diesen Kommentar durch Ihren Code:
-        Sei p ein Punkt auf der Kugeloberfläche.
+        Ersetzen Sie das 'return' statement unten durch
+        Ihren Code: Sei p ein Punkt auf der Kugeloberfläche.
         Geben Sie den nach aussen zeigenden, normierten
         Normalenvektor auf der Kugel am Punkt p zurück.
         """
