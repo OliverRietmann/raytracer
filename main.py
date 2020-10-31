@@ -11,16 +11,19 @@ renderer = Renderer(camera)
 
 objects = []
 
-properties = Properties(array([1.0, 0.0, 0.0]), 0.2, 0.8, 0.0)
+lightsource_list = [array([0.0, 0.0, 10.0]), array([-5.0, 5.0, 10.0])]
+
+red = array([1.0, 0.0, 0.0])
+properties = Properties(red, 0.2, 0.8, 0.0)
 objects.append(Sphere(array([5.0, -1.0, 0.0]), 1.0, properties))
 
-properties = Properties(array([0.0, 0.0, 1.0]), 0.2, 0.6, 0.2)
+blue = array([0.0, 0.0, 1.0])
+properties = Properties(blue, 0.2, 0.2, 0.6)
 objects.append(Sphere(array([6.0, 1.5, 0.75]), 1.0, properties))
 
-properties = Properties(array([0.7, 0.7, 0.7]), 0.2, 0.6, 0.2)
+gray = array([0.7, 0.7, 0.7])
+properties = Properties(gray, 0.2, 0.6, 0.2)
 objects.append(Plane(array([0.0, 0.0, 1.0]), 1.0, properties))
 
-lightsource = array([0.0, 0.0, 10.0])
-
-renderer(lightsource, objects)
+renderer(lightsource_list, objects)
 renderer.save_image("image.png")

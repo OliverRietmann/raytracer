@@ -25,7 +25,7 @@ class Object:
     def transform(self, matrix):
         pass
 
-    def shader(self, p, d, lightsource, object_list, recursion_depth=1):
+    def shader(self, p, d, lightsource_list, object_list, recursion_depth=1):
         normal = self.get_normal(p)
 
         # ambient
@@ -33,12 +33,13 @@ class Object:
 
         # diffuse
         if self.properties.diffuse > 0.0:
-            lightray = Ray(lightsource, p - lightsource)
-            nearest_obstacle, t = get_nearest_obstacle(lightray, object_list)
-            if nearest_obstacle is not None and nearest_obstacle.id == self.id:
-                diffuse_coefficient = -inner(normal, normalize(lightray.direction))
-                diffuse_coefficient = clip(diffuse_coefficient, 0.0, 1.0)
-                color += self.properties.diffuse * diffuse_coefficient * self.properties.color
+            for lightsource in lightsource_list:
+                lightray = Ray(lightsource, p - lightsource)
+                nearest_obstacle, t = get_nearest_obstacle(lightray, object_list)
+                if nearest_obstacle is not None and nearest_obstacle.id == self.id:
+                    diffuse_coefficient = -inner(normal, normalize(lightray.direction))
+                    diffuse_coefficient = clip(diffuse_coefficient, 0.0, 1.0)
+                    color += self.properties.diffuse * diffuse_coefficient * self.properties.color
 
         # reflection
         if self.properties.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
@@ -46,7 +47,7 @@ class Object:
             obj, t = get_nearest_obstacle(reflection_ray, object_list)
             if obj is not None:
                 reflection_color = obj.shader(reflection_ray(t), reflection_ray.direction, \
-                lightsource, object_list, recursion_depth - 1)
+                lightsource_list, object_list, recursion_depth - 1)
                 color += self.properties.reflection * reflection_color
 
         return color
