@@ -1,4 +1,4 @@
-from numpy import clip, inner
+from numpy import array, clip, inner
 from numpy.linalg import norm
 
 from core.ray import Ray
@@ -27,6 +27,7 @@ class Object:
 
     def shader(self, p, d, lightsource_list, object_list, recursion_depth=1):
         normal = self.get_normal(p)
+        reflect = lambda incoming: incoming - 2.0 * inner(normal, incoming) * normal
 
         # ambient
         color = self.properties.ambient * self.properties.color
@@ -40,6 +41,13 @@ class Object:
                     diffuse_coefficient = -inner(normal, normalize(lightray.direction))
                     diffuse_coefficient = clip(diffuse_coefficient, 0.0, 1.0)
                     color += self.properties.diffuse * diffuse_coefficient * self.properties.color
+
+                    # Phong
+                    if self.properties.phong[0] > 0.0 and self.properties.phong[1] > 0:
+                        reflected = normalize(reflect(lightray.direction))
+                        factor = -inner(reflected, normalize(d))
+                        if factor > 0.0:
+                            color += self.properties.phong[0] * factor**self.properties.phong[1] * array([1.0, 1.0, 1.0])
 
         # reflection
         if self.properties.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
