@@ -56,6 +56,6 @@ class Object:
             if obj is not None:
                 reflection_color = obj.shader(reflection_ray(t), reflection_ray.direction, \
                 lightsource_list, object_list, recursion_depth - 1)
-                color += self.properties.reflection * reflection_color
+                color += self.properties.reflection * reflection_color * self.properties.color
 
         return color
