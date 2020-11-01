@@ -8,6 +8,7 @@ class Plane(Object):
         self.n = n
         self.d = d
 
+    #---intersect-begin---
     def intersect(self, ray):
         v = ray.origin
         w = ray.direction
@@ -17,8 +18,11 @@ class Plane(Object):
             t = -1.0 * (self.d + inner(self.n, v)) / nw
             if t > 0.0:
                 return t
+
         return inf
+    #---intersect-end---
 
-
+    #---get_normal-begin---
     def get_normal(self, p):
         return normalize(self.n)
+    #---get_normal-end---

@@ -11,7 +11,7 @@ class Box(Object):
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 
-    #---intersect---
+    #---intersect-begin---
     def intersect(self, ray):
         v = ray.origin
         w = ray.direction
@@ -26,9 +26,9 @@ class Box(Object):
             return max(tmin)
 
         return inf
-    #---end---
+    #---intersect-end---
 
-    #---normal---
+    #---get_normal-begin---
     def get_normal(self, p):
         c = 0.5 * (self.lower_bound + self.upper_bound)
         edges = self.upper_bound - self.lower_bound
@@ -37,4 +37,4 @@ class Box(Object):
         n = array([0.0, 0.0, 0.0])
         n[i] = sign(p_rel[i])
         return n
-    #---normalend---
+    #---get_normal-end---

@@ -8,7 +8,7 @@ class Sphere(Object):
         self.m = m
         self.r = r
 
-    #---intersect---
+    #---intersect-begin---
     def intersect(self, ray):
         v = ray.origin
         w = ray.direction
@@ -27,9 +27,9 @@ class Sphere(Object):
             if t1 > 0.0 and inner(ray(t1) - self.m, w) < 0.0:
                 return t1
         return inf
-    #---end---
+    #---intersect-end---
 
-    #---normal---
+    #---get_normal-begin---
     def get_normal(self, p):
         return normalize(p - self.m)
-    #---normalend---
+    #---get_normal-end---

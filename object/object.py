@@ -51,7 +51,7 @@ class Object:
 
         # reflection
         if self.properties.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
-            reflection_ray = Ray(p, d - 2.0 * inner(d, normal) * normal)
+            reflection_ray = Ray(p, reflect(d))
             obj, t = get_nearest_obstacle(reflection_ray, object_list)
             if obj is not None:
                 reflection_color = obj.shader(reflection_ray(t), reflection_ray.direction, \
