@@ -1,3 +1,7 @@
+#!/usr/bin/python
+
+from sys import argv
+
 from numpy import array, pi
 
 from core.camera import Camera
@@ -8,6 +12,10 @@ from object.box import Box
 from object.plane import Plane
 from object.sphere import Sphere
 
+if len(argv) == 2:
+    filename = str(argv[1])
+else:
+    filename = "image.png"
 
 camera = Camera(array([-10.0, 0.0, 2.0]), array([0.0, 0.0, 1.0]), 0.25 * pi, 640, 480)
 
@@ -34,4 +42,4 @@ properties = Properties(color=gray, ambient=0.2, diffuse=0.6, phong=[0.0, 0], re
 object_list.append(Plane(array([0.0, 0.0, 1.0]), 1.0, properties))
 
 renderer(lightsource_list, object_list)
-renderer.save_image("image.png")
+renderer.save_image(filename)
