@@ -151,7 +151,7 @@
 		Wir sind aber nur an positiven Lösungen interessiert, denn wir beschreiben einen Strahl und keine Gerade.
 		Sind $t_1$ und $t_2$ beide negativ, so schneidet der Strahl die Kugel nicht.
 		Andernfalls ist die kleinste positive Lösung der quadratischen Gleichung unsere Wahl für $t$.
-		Der nächstgelegene Schnittpunkt ist entsprechend $v+tw$.
+		Der nächstgelegene Schnittpunkt ist entsprechend $\vec{v}+t\vec{w}$.
 	\end{losung*}
 	\begin{aufgabe}\label{aufg:intersect_implementation}
 		Öffnen Sie nun das File \texttt{myobject/sphere.py} und implementieren Sie die Funktion \texttt{intersect(self, ray)} gemäss Ihren Überlegungen aus Aufgabe~\ref{aufg:intersect_theory}.
@@ -179,21 +179,22 @@
 	Die Punkte auf der Kugeloberfläche, welche der Lichtquelle zugewandt sind, sollen heller sein.
 	Die wichtigsten Begriffe sind das \textit{Skalarprodukt} und der \textit{Normalenvektor} auf die Kugeloberfläche.
 	Man betrachte dazu Abbildung~\ref{fig:sphere_diffuse}.
-	\begin{SCfigure}[2][!h]
+	Diese zeigt eine punktförmige Lichtquelle am Ort $\vec{v}$.
+	Wir wollen den Farbwert am Punkt $\vec{p}$ auf der Kugel berechnen. Der Vektor $\vec{n}$ an diesem Punkt soll rechtwinklig zur Kugeloberfläche sein, nach aussen Zeigen und Länge $1$ haben. Wir nennen $\vec{n}$ den Normalenvektor auf die Kugel im Punkt $\vec{p}$.
+	\begin{figure}[ht]
 		\centering
-		\includegraphics[width=0.3\textwidth]{images/sphere_diffuse.pdf}
-		\caption{Die Lichtquelle befindet sich am Punkt $\vec{v}$. Wir wollen den Farbwert am Punkt $\vec{p}$ auf der Kugel berechnen. Der Vektor $\vec{n}$ an diesem Punkt soll rechtwinklig zur Kugeloberfläche sein, nach aussen Zeigen und Länge $1$ haben. Wir nennen $\vec{n}$ den Normalenvektor an $\vec{p}$.}
+		\includegraphics[width=0.5\textwidth]{images/sphere_diffuse.pdf}
+		\caption{Die Kugel wird von einer Punktförmigen Lichtquelle in $\vec{v}$ beleuchtet.}
 	\label{fig:sphere_diffuse}
-	\end{SCfigure}
-	Zu einer gegebenen Lichtquelle am Punkt $\vec{v}$ und einem Beliebigen Punkt $\vec{p}$ auf der Kugel berechnen wir eine Zahl $c\in\left[0,1\right]$ welche die Helligkeit an diesem Punkt beschreibt.
-	Dabei heisst $c=1$ maximale Helligkeit und $c=0$ heisst minimale Helligkeit, also Schwarz.
-	Das geht folgendermassen:
+	\end{figure}
+	Wir ordnen dem Punkt $\vec{p}$ eine Zahl $c\in\left[0,1\right]$ zu, welche die Helligkeit an diesem Punkt beschreibt.
+	Dabei bedeutet $c=1$ maximale Helligkeit und $c=0$ minimale Helligkeit, also Schwarz:
 	\begin{equation}\label{eq:diffuse_coefficient}
 		c=\max\left(-\vec{n}\cdot\vec{w}, 0\right),\quad
 		\vec{w}=\frac{\vec{p}-\vec{v}}{\lVert\vec{p}-\vec{v}\rVert}.
 	\end{equation}
 	\begin{aufgabe}\label{aufg:diffuse_coefficient}
-		Ist die Berechnung von $c$ in Gleichung~\eqref{eq:diffuse_coefficient} sinnvoll? Erklären Sie.
+		Warum misst $c$ in Gleichung~\eqref{eq:diffuse_coefficient} die Helligkeit? Erklären Sie.
 	\end{aufgabe}
 	\begin{losung*}
 		Da sowohl $\vec{n}$ als auch $\vec{w}$ Länge $1$ haben, gilt wie verlangt $c\in\left[0,1\right]$.
