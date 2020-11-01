@@ -1,20 +1,19 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage[a4paper,total={160mm,250mm}]{geometry}
 \usepackage[utf8]{inputenc}
-\usepackage{ngerman}
+\usepackage[ruled,vlined]{algorithm2e}
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amscd}
-\usepackage{graphicx}
+\usepackage{color}
 \usepackage{enumerate}
-\usepackage{color}
-\usepackage{mathtools}
-\usepackage[ruled,vlined]{algorithm2e}
-\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{hyperref}
 \usepackage{listings}
-\usepackage{color}
+\usepackage{mathtools}
+\usepackage{ngerman}
 
 \theoremstyle{definition}
 \newtheorem{aufgabe}{Aufgabe}
@@ -27,7 +26,7 @@
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 \definecolor{lightgray}{rgb}{0.9,0.9,0.9}
 
-\lstset{
+\lstdefinestyle{python}{
 	backgroundcolor=\color{lightgray},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}; should come as last argument
 	basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
 	breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
@@ -61,160 +60,214 @@
 
 \pagestyle{empty}
 
+\title{Raytracing und Vektorgeometrie}
+\author{Oliver Rietmann}
+\date{\today}
+
 \begin{document}
-	\section*{Was ist Raytracing?}
-	Raytracing bezeichnet eine Methode zur Generierung von realistischen 3D Bildern.
-	Dabei kommen unter anderem Reflexions- und Brechungsgesetze aus der Physik zur Anwendung.
-	Vor allem aber beruht die Technik auf der Vektorgeometrie wie man sie am Gymnasium unterrichtet.
-	Die Idee ist folgende: Wir verteilen einige Objekte (Kugeln, Würfel, etc.) im dreidimensionalen Raum.
-	Wir nennen dies die Szene.
-	Nun stellt man irgendwo eine Kamera auf.
-	Vor der Kamera stellen wir uns eine rechteckige Fläche, die Bildebene, vor.
-	Auf die Bildebene zeichnen wir nun die dahinter liegende Szene wie folgt:
-	Ausgehend von der Kamera senden wir einen Strahl aus, der die Bildebene durchstösst und dann womöglich auf ein Objekt unserer Szene trifft.
-	Trifft der Strahl zum Beispiel auf ein rotes Dreieck, so wird der Durchstosspunkt auf der Bildebene rot eingefärbt.
-	Danach senden wir einen weiteren Strahl von der Kamera durch einen anderen Punkt auf der Bildebene und färben den Durchstosspunkt entsprechend ein.
-	Wir wiederholen dies bis die ganze Bildebene eingefärbt ist.
-	Das so auf der Bildebene generierte Abbild der Szene ist der Output unseres Programms.
-	Diese Methode ein Bild zu generieren heisst Raytracing, denn man verfolgt den Strahl.
-	\begin{figure}[h!]
-		\centering
-		\includegraphics[width=\textwidth]{images/raytracing.png}
-		\caption{Raytracing: Es werden Strahlen ausgesendet und deren Schnittpunkte mit Objekten ermittelt. In diesem Fall wir der Durchstosspunkt auf der Bildebene in der Farbe des roten Dreiecks gefärbt.}
-		\label{fig:raytracing}
-	\end{figure}
+\maketitle
+\tableofcontents
+\section{Raytracing}
+Raytracing bezeichnet eine Methode zur Generierung von realistischen 3D Bildern.
+Dabei kommen unter anderem Reflexions- und Brechungsgesetze aus der Physik zur Anwendung.
+Vor allem aber beruht die Technik auf der Vektorgeometrie wie man sie am Gymnasium unterrichtet.
+Die Idee ist folgende: Wir verteilen einige Objekte (Kugeln, Würfel, etc.) im dreidimensionalen Raum.
+Wir nennen dies die Szene.
+Nun stellt man irgendwo eine Kamera auf.
+Vor der Kamera stellen wir uns eine rechteckige Fläche, die Bildebene, vor.
+Auf die Bildebene zeichnen wir nun die dahinter liegende Szene wie folgt:
+Ausgehend von der Kamera senden wir einen Strahl aus, der die Bildebene durchstösst und dann womöglich auf ein Objekt unserer Szene trifft.
+Trifft der Strahl zum Beispiel auf ein rotes Dreieck, so wird der Durchstosspunkt auf der Bildebene rot eingefärbt.
+Danach senden wir einen weiteren Strahl von der Kamera durch einen anderen Punkt auf der Bildebene und färben den Durchstosspunkt entsprechend ein.
+Wir wiederholen dies bis die ganze Bildebene eingefärbt ist.
+Das so auf der Bildebene generierte Abbild der Szene ist der Output unseres Programms.
+Diese Methode ein Bild zu generieren heisst Raytracing, denn man verfolgt den Strahl.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth]{images/raytracing.png}
+	\caption{Raytracing: Es werden Strahlen ausgesendet und deren Schnittpunkte mit Objekten ermittelt. In diesem Fall wir der Durchstosspunkt auf der Bildebene in der Farbe des roten Dreiecks gefärbt.}
+	\label{fig:raytracing}
+\end{figure}
 
-	\section*{Worum geht es im Folgenden?}
-	Wir wollen nun unser eigenes Raytracing-Programm in Python programmieren.
-	Genauer gesagt ist der Raytracing-Algorithmus im Kern schon implementiert.
-	Allerdings kennt diese Implementierung noch keine Objekte wie Kugeln, Würfel, Ebenen und so weiter.
-	Hier kommen Sie als Leser ins Spiel.
-	Sie werden unter Anleitung diese fehlenden Teile ergänzen.
-	Es geht darum dem Raytracing-Programm zu sagen, was zum Beispiel eine Kugel ist, wie man deren Schnittpunkt mit einem Strahl berechnet und vieles mehr.
-	Am Ende werden wir Bilder wie in Abbildung~\ref{fig:goal} generieren können.
-	\begin{figure}[h!]
-		\centering
-		\includegraphics[width=0.75\textwidth]{images/outlook.png}
-		\caption{Dieses Bild wurde mit unserem Raytracing-Programm generiert.}
-		\label{fig:goal}
-	\end{figure}
-	Dabei müssen Sie als Leser ausschliesslich die Python-Files im Verzeichnis \texttt{myobject} editieren.
-	Die darin enthaltenen Klassen werden dann die verschiedenen Objekt-Typen wie Kugeln, Ebenen und dergleichen beschreiben.
-	Ohne hier weiter ins Detail zu gehen, werden wir nun unser erstes Bild generieren.
+\section{Worum geht es im Folgenden?}
+Wir wollen nun unser eigenes Raytracing-Programm in Python programmieren.
+Genauer gesagt ist der Raytracing-Algorithmus im Kern schon implementiert.
+Allerdings kennt diese Implementierung noch keine Objekte wie Kugeln, Würfel, Ebenen und so weiter.
+Hier kommen Sie als Leser ins Spiel.
+Sie werden unter Anleitung diese fehlenden Teile ergänzen.
+Es geht darum dem Raytracing-Programm zu sagen, was zum Beispiel eine Kugel ist, wie man deren Schnittpunkt mit einem Strahl berechnet und vieles mehr.
+Am Ende werden wir Bilder wie in Abbildung~\ref{fig:goal} generieren können.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.75\textwidth]{images/outlook.png}
+	\caption{Dieses Bild wurde mit unserem Raytracing-Programm generiert.}
+	\label{fig:goal}
+\end{figure}
+Das nächste Kapitel ist eine Anleitung zur Installation der nötigen Software.
 
-	\section*{Die Kugel}
-	Als Einstieg generieren wir ein Bild bestehend aus folgender Szene:
-	Eine Kamera befindet sich an den Koordinaten $(-1,0,1)$ und schaut in Richtung des Punktes $(0,0,1)$, das heisst entlang der x-Achse.
-	Zudem platzieren wir eine Kugel mit Mittelpunkt $(1,0,1)$ und Radius $1$.
-	Damit schaut die Kamera genau auf die Kugel.
-	Diese Szene entspricht dem Python-File \texttt{examples/example1.py}, welches wir nun ausführen. Anstatt eine Kugel sehen wir aber nur ein schwarzes Bild.
-	Um die Kugel auch zu sehen, müssen wir zuerst das File \texttt{myobject/sphere.py} bearbeiten.
-	Genauer gesagt, muss die Funktion \texttt{intersect(self, ray)} vervollständigt werden.
-	Diese soll zu einem gegebenen Strahl dessen nächstgelegenen Schnittpunkt berechnen.
-	Man betrachte dazu Abbildung~\ref{fig:sphere_intersect}.
+\section{Installation}
+Die Python-Codes können unter \url{https://gitlab.math.ethz.ch/rioliver/raytracing} heruntergeladen werden.
+Nun installieren wir Python und die packages \texttt{numpy} und \texttt{PIL}.
+
+\subsection*{Windows 10}
+Gehen Sie auf die offizielle Python-Webseite um von dort die neuste Python Version zu installieren. Wir brauchen mindestens Version 3.8.
+Danach überprüfen wir mit folgenden drei Schritten, ob die Installation erfolgreich war:
+\begin{enumerate}
+	\item Drücken Sie die Windows-Taste um eine Suche zu starten.
+	\item Schreiben Sie dann \texttt{cmd} und drücken Sie Enter um die Kommandozeile zu öffnen.
+	\item In der Kommandozeile schreiben Sie \texttt{python} und drücken wieder Enter.
+\end{enumerate}
+Nun sollte die Version der Python-Installation ausgegeben werden.
+Anschliessend können in der Kommandozeile mit
+\begin{verbatim}
+	python -m pip install numpy Pillow --user
+\end{verbatim}
+die Abhängigkeiten installiert werden.
+Von nun an kann ein Python-Script \texttt{script.py} in der Kommandozeile ausgeführt werden mit dem Befehl \texttt{python script.py}.
+Dazu muss aber zuerst mit dem Befehl \texttt{cd <Verzeichnis>} in das Verzeichnis navigiert werden, welches \texttt{script.py} enthält.
+
+\subsection*{MacOS}
+Öffnen Sie einen Terminal, zum Beispliel indem Sie nach der Applikation Terminal suchen.
+Installieren Sie dann Homebrew indem Sie die Zeile (alles soll auf eine Zeile!)
+\begin{verbatim}
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/
+install/master/install.sh)"
+\end{verbatim}
+im den Terminal kopieren und mit Enter ausführen.
+Anschliessend können Sie Python mit dem Befehl \texttt{brew install python} installieren.
+Danach müssen noch mit
+\begin{verbatim}
+	python3 -m pip install numpy Pillow --user
+\end{verbatim}
+die Abhängigkeiten installiert werden.
+Von nun an kann ein Python-Script \texttt{script.py} im Terminal ausgeführt werden mit dem Befehl \texttt{python3 script.py}.
+Dazu muss aber zuerst mit dem Befehl \texttt{cd <Verzeichnis>} in das Verzeichnis navigiert werden, welches \texttt{script.py} enthält.
+
+\subsection*{Linux}
+Öffnen Sie einen Terminal.
+Unter Ubuntu wird Python mit dem Befehl \texttt{sudo apt-get install python3} installiert, unter Fedora hingegen mit \texttt{sudo dnf install python3}.
+In beiden Fällen werden Administrator-Rechte benötigt.
+Anschliessend können mit
+\begin{verbatim}
+	python3 -m pip install numpy Pillow --user
+\end{verbatim}
+die Abhängigkeiten installiert werden.
+Von nun an kann ein Python-Script \texttt{script.py} im Terminal ausgeführt werden mit dem Befehl \texttt{python3 script.py}.
+Dazu muss aber zuerst mit dem Befehl \texttt{cd <Verzeichnis>} in das Verzeichnis navigiert werden, welches \texttt{script.py} enthält.
+
+\section{Die Kugel}
+Als Einstieg generieren wir ein Bild bestehend aus folgender Szene:
+Eine Kamera befindet sich an den Koordinaten $(-1,0,1)$ und schaut in Richtung des Punktes $(0,0,1)$, das heisst entlang der x-Achse.
+Zudem platzieren wir eine Kugel mit Mittelpunkt $(1,0,1)$ und Radius $1$.
+Damit schaut die Kamera genau auf die Kugel.
+Diese Szene entspricht dem Python-File \texttt{examples/example1.py}, welches wir nun ausführen. Anstatt eine Kugel sehen wir aber nur ein schwarzes Bild.
+Um die Kugel auch zu sehen, müssen wir zuerst das File \texttt{myobject/sphere.py} bearbeiten.
+Genauer gesagt, muss die Funktion \texttt{intersect(self, ray)} vervollständigt werden.
+Diese soll zu einem gegebenen Strahl dessen nächstgelegenen Schnittpunkt berechnen.
+Man betrachte dazu Abbildung~\ref{fig:sphere_intersect}.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{images/sphere_intersect.pdf}
+	\caption{Schnittpunkt von Strahl und Kugel.}
+	\label{fig:sphere_intersect}
+\end{figure}
+\begin{aufgabe}\label{aufg:intersect_theory}
+	Gegeben Sei ein Strahl mit Ursprung $\vec{v}$ und Richtung $\vec{w}$.
+	Überlegen Sie sich die Kugel mit Mittelpunkt $\vec{m}$ und Radius $r$ schneidet.
+	Wie erhalten Sie in diesem Fall den Parameter $t>0$, so dass $\vec{v}+t\vec{w}$ gerade dem näherem der beiden Schnittpunkte entspricht?
+\end{aufgabe}
+\begin{losung*}
+	Ein beliebiger Punkt auf dem Strahl ist von der Form $\vec{v}+s\vec{w}$ für ein $s>0$.
+	So ein Punkt liegt auf der Kugeloberfläche genau dann wenn
+	\begin{equation*}
+		\lVert\vec{v}+s\vec{w}-\vec{m}\rVert^2=r^2,
+	\end{equation*}
+	also wenn er den Abstand $r$ zum Mittelpunkt hat.
+	Dies ist eine quadratische Gleichung in $s$, das heisst sie ist von der Form
+	\begin{equation*}
+		as^2+bs+c=0
+	\end{equation*}
+	für reelle Zahlen $a,b$ und $c$.
+	Durch einen Koeffizientenvergleich erhält man
+	\begin{equation*}
+		a=\rVert\vec{w}\rVert^2,\quad
+		b=2\vec{w}\cdot(\vec{v}-\vec{m}),\quad
+		c=\lVert\vec{v}-\vec{m}\rVert^2-r^2.
+	\end{equation*}
+	Falls $b^2-4ac>0$, so existieren genau zwei Schnittpunkte $v+t_1w$ und $v+t_2w$, wobei
+	\begin{equation*}
+		t_1=\frac{-b-\sqrt{b^2-4ac}}{2a}
+		\quad\text{und}\quad
+		t_2=\frac{-b+\sqrt{b^2-4ac}}{2a}.
+	\end{equation*}
+	Wir sind aber nur an positiven Lösungen interessiert, denn wir beschreiben einen Strahl und keine Gerade.
+	Sind $t_1$ und $t_2$ beide negativ, so schneidet der Strahl die Kugel nicht.
+	Andernfalls ist die kleinste positive Lösung der quadratischen Gleichung unsere Wahl für $t$.
+	Der nächstgelegene Schnittpunkt ist entsprechend $\vec{v}+t\vec{w}$.
+\end{losung*}
+\begin{aufgabe}\label{aufg:intersect_implementation}
+	Öffnen Sie nun das File \texttt{myobject/sphere.py} und implementieren Sie die Funktion \texttt{intersect(self, ray)} gemäss Ihren Überlegungen aus Aufgabe~\ref{aufg:intersect_theory}.
+	Lassen Sie anschliessend das Skript \texttt{examples/example1.py} nochmals laufen.
+	Nun sollten Sie die Kugel sehen.
+\end{aufgabe}
+\begin{losung*}
+	Die Lösung könnte zum Beipiel so aussehen:
+	\lstinputlisting[style=python,linerange=intersect\-begin-intersect\-end]{../object/sphere.py}
+	Zusätzlich zu unserer Lösung von Aufgabe~\ref{aufg:intersect_theory} haben wir hier noch überprüft, ob der Strahl am Schnittpunkt in die Kugel eintritt (und nicht etwa austritt).
+	Nur diese Lösung lassen wir zu.
+	Wir werden später sehen, warum das nützlich ist.
+	Das so generierte Bild ist in Abbildung~\ref{fig:solution_sphere} gezeigt.
 	\begin{figure}[ht]
 		\centering
-		\includegraphics[width=0.5\textwidth]{images/sphere_intersect.pdf}
-		\caption{Schnittpunkt von Strahl und Kugel.}
-		\label{fig:sphere_intersect}
+		\includegraphics[width=0.5\textwidth]{images/example1.png}
+		\caption{Lösung der Aufgabe~\ref{aufg:intersect_implementation}.}
+		\label{fig:solution_sphere}
 	\end{figure}
-	\begin{aufgabe}\label{aufg:intersect_theory}
-		Gegeben Sei ein Strahl mit Ursprung $\vec{v}$ und Richtung $\vec{w}$.
-		Überlegen Sie sich die Kugel mit Mittelpunkt $\vec{m}$ und Radius $r$ schneidet.
-		Wie erhalten Sie in diesem Fall den Parameter $t>0$, so dass $\vec{v}+t\vec{w}$ gerade dem näherem der beiden Schnittpunkte entspricht?
-	\end{aufgabe}
-	\begin{losung*}
-		Ein beliebiger Punkt auf dem Strahl ist von der Form $\vec{v}+s\vec{w}$ für ein $s>0$.
-		So ein Punkt liegt auf der Kugeloberfläche genau dann wenn
-		\begin{equation*}
-			\lVert\vec{v}+s\vec{w}-\vec{m}\rVert^2=r^2,
-		\end{equation*}
-		also wenn er den Abstand $r$ zum Mittelpunkt hat.
-		Dies ist eine quadratische Gleichung in $s$, das heisst sie ist von der Form
-		\begin{equation*}
-			as^2+bs+c=0
-		\end{equation*}
-		für reelle Zahlen $a,b$ und $c$.
-		Durch einen Koeffizientenvergleich erhält man
-		\begin{equation*}
-			a=\rVert\vec{w}\rVert^2,\quad
-			b=2\vec{w}\cdot(\vec{v}-\vec{m}),\quad
-			c=\lVert\vec{v}-\vec{m}\rVert^2-r^2.
-		\end{equation*}
-		Falls $b^2-4ac>0$, so existieren genau zwei Schnittpunkte $v+t_1w$ und $v+t_2w$, wobei
-		\begin{equation*}
-			t_1=\frac{-b-\sqrt{b^2-4ac}}{2a}
-			\quad\text{und}\quad
-			t_2=\frac{-b+\sqrt{b^2-4ac}}{2a}.
-		\end{equation*}
-		Wir sind aber nur an positiven Lösungen interessiert, denn wir beschreiben einen Strahl und keine Gerade.
-		Sind $t_1$ und $t_2$ beide negativ, so schneidet der Strahl die Kugel nicht.
-		Andernfalls ist die kleinste positive Lösung der quadratischen Gleichung unsere Wahl für $t$.
-		Der nächstgelegene Schnittpunkt ist entsprechend $\vec{v}+t\vec{w}$.
-	\end{losung*}
-	\begin{aufgabe}\label{aufg:intersect_implementation}
-		Öffnen Sie nun das File \texttt{myobject/sphere.py} und implementieren Sie die Funktion \texttt{intersect(self, ray)} gemäss Ihren Überlegungen aus Aufgabe~\ref{aufg:intersect_theory}.
-		Lassen Sie anschliessend das Skript \texttt{examples/example1.py} nochmals laufen.
-		Nun sollten Sie die Kugel sehen.
-	\end{aufgabe}
-	\begin{losung*}
-		Die Lösung könnte zum Beipiel so aussehen:
-		\lstinputlisting[linerange=intersect\-begin-intersect\-end]{../object/sphere.py}
-		Zusätzlich zu unserer Lösung von Aufgabe~\ref{aufg:intersect_theory} haben wir hier noch überprüft, ob der Strahl am Schnittpunkt in die Kugel eintritt (und nicht etwa austritt).
-		Nur diese Lösung lassen wir zu.
-		Wir werden später sehen, warum das nützlich ist.
-		Das so generierte Bild ist in Abbildung~\ref{fig:solution_sphere} gezeigt.
-		\begin{figure}[ht]
-			\centering
-			\includegraphics[width=0.5\textwidth]{images/example1.png}
-			\caption{Lösung der Aufgabe~\ref{aufg:intersect_implementation}.}
-			\label{fig:solution_sphere}
-		\end{figure}
-	\end{losung*}
-	Unsere Kugel sieht momentan eher wie eine Kreisscheibe aus, weil wir der Kugel an jedem Punkt den selben Farbwert geben.
-	Das wollen wir nun ändern indem wir eine diffuse Lichtreflexion simulieren.
-	Das Python-File \texttt{examples/example2.py} platziert zu diesem Zweck eine Punktförmige Lichtquelle an den Koordinaten $(0,0,10)$.
-	Diese wollen wir nun in die Berechnung der Farbwerte miteinbeziehen:
-	Die Punkte auf der Kugeloberfläche, welche der Lichtquelle zugewandt sind, sollen heller sein.
-	Die wichtigsten Begriffe sind das \textit{Skalarprodukt} und der \textit{Normalenvektor} auf die Kugeloberfläche.
-	Man betrachte dazu Abbildung~\ref{fig:sphere_diffuse}.
-	Diese zeigt eine punktförmige Lichtquelle am Ort $\vec{v}$.
-	Wir wollen den Farbwert am Punkt $\vec{p}$ auf der Kugel berechnen. Der Vektor $\vec{n}$ an diesem Punkt soll rechtwinklig zur Kugeloberfläche sein, nach aussen Zeigen und Länge $1$ haben. Wir nennen $\vec{n}$ den Normalenvektor auf die Kugel im Punkt $\vec{p}$.
+\end{losung*}
+Unsere Kugel sieht momentan eher wie eine Kreisscheibe aus, weil wir der Kugel an jedem Punkt den selben Farbwert geben.
+Das wollen wir nun ändern indem wir eine diffuse Lichtreflexion simulieren.
+Das Python-File \texttt{examples/example2.py} platziert zu diesem Zweck eine Punktförmige Lichtquelle an den Koordinaten $(0,0,10)$.
+Diese wollen wir nun in die Berechnung der Farbwerte miteinbeziehen:
+Die Punkte auf der Kugeloberfläche, welche der Lichtquelle zugewandt sind, sollen heller sein.
+Die wichtigsten Begriffe sind das \textit{Skalarprodukt} und der \textit{Normalenvektor} auf die Kugeloberfläche.
+Man betrachte dazu Abbildung~\ref{fig:sphere_diffuse}.
+Diese zeigt eine punktförmige Lichtquelle am Ort $\vec{v}$.
+Wir wollen den Farbwert am Punkt $\vec{p}$ auf der Kugel berechnen. Der Vektor $\vec{n}$ an diesem Punkt soll rechtwinklig zur Kugeloberfläche sein, nach aussen Zeigen und Länge $1$ haben. Wir nennen $\vec{n}$ den Normalenvektor auf die Kugel im Punkt $\vec{p}$.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.5\textwidth]{images/sphere_diffuse.pdf}
+	\caption{Die Kugel wird von einer Punktförmigen Lichtquelle in $\vec{v}$ beleuchtet.}
+\label{fig:sphere_diffuse}
+\end{figure}
+Wir ordnen dem Punkt $\vec{p}$ eine Zahl $c\in\left[0,1\right]$ zu, welche die Helligkeit an diesem Punkt beschreibt.
+Dabei bedeutet $c=1$ maximale Helligkeit und $c=0$ minimale Helligkeit, also Schwarz:
+\begin{equation}\label{eq:diffuse_coefficient}
+	c=\max\left(-\vec{n}\cdot\vec{w}, 0\right),\quad
+	\vec{w}=\frac{\vec{p}-\vec{v}}{\lVert\vec{p}-\vec{v}\rVert}.
+\end{equation}
+\begin{aufgabe}\label{aufg:diffuse_coefficient}
+	Warum misst $c$ in Gleichung~\eqref{eq:diffuse_coefficient} die Helligkeit? Erklären Sie.
+\end{aufgabe}
+\begin{losung*}
+	Da sowohl $\vec{n}$ als auch $\vec{w}$ Länge $1$ haben, gilt wie verlangt $c\in\left[0,1\right]$.
+	Der Vektor $\vec{w}$ beschreibt gerade die Einfallsrichtung des Lichtes am Punkt $\vec{p}$.
+	Ist diese rechtwinklig auf die Kugeloberfläche, so haben wir $c=1$, also maximale Helligkeit.
+	Je kleiner der Einfallwinkel des Lichtes, desto kleiner wird $c$, bis schliesslich alle  Punkte auf der der Lichtquelle abgewandten Seite die Helligkeit $c=0$ haben.
+\end{losung*}
+\begin{aufgabe}\label{aufg:diffuse_implementation}
+	Öffnen Sie nun das File \texttt{myobject/sphere.py} und implementieren Sie die Funktion \texttt{get\_normal(self, p)}, nach aussen zeigenden Normalenvektor $\vec{n}$ der Lange $1$ am Punkt $\vec{p}$ zurück gibt.
+	Lassen Sie anschliessend das Skript \texttt{examples/example2.py} laufen.
+\end{aufgabe}
+\begin{losung*}
+	Die Lösung könnte zum Beipiel so aussehen:
+	\lstinputlisting[style=python,linerange=get\_normal\-begin-get\_normal\-end]{../object/sphere.py}
+	Das generierte Bild in Abbildung~\ref{fig:solution_diffuse} sieht schon viel interessanter aus.
+	Die Lichtquelle befindet sich über der Kugel und beleuchtet nur deren obere Hälfte.
 	\begin{figure}[ht]
 		\centering
-		\includegraphics[width=0.5\textwidth]{images/sphere_diffuse.pdf}
-		\caption{Die Kugel wird von einer Punktförmigen Lichtquelle in $\vec{v}$ beleuchtet.}
-	\label{fig:sphere_diffuse}
+		\includegraphics[width=0.5\textwidth]{images/example2.png}
+		\caption{Lösung der Aufgabe~\ref{aufg:diffuse_implementation}.}
+		\label{fig:solution_diffuse}
 	\end{figure}
-	Wir ordnen dem Punkt $\vec{p}$ eine Zahl $c\in\left[0,1\right]$ zu, welche die Helligkeit an diesem Punkt beschreibt.
-	Dabei bedeutet $c=1$ maximale Helligkeit und $c=0$ minimale Helligkeit, also Schwarz:
-	\begin{equation}\label{eq:diffuse_coefficient}
-		c=\max\left(-\vec{n}\cdot\vec{w}, 0\right),\quad
-		\vec{w}=\frac{\vec{p}-\vec{v}}{\lVert\vec{p}-\vec{v}\rVert}.
-	\end{equation}
-	\begin{aufgabe}\label{aufg:diffuse_coefficient}
-		Warum misst $c$ in Gleichung~\eqref{eq:diffuse_coefficient} die Helligkeit? Erklären Sie.
-	\end{aufgabe}
-	\begin{losung*}
-		Da sowohl $\vec{n}$ als auch $\vec{w}$ Länge $1$ haben, gilt wie verlangt $c\in\left[0,1\right]$.
-		Der Vektor $\vec{w}$ beschreibt gerade die Einfallsrichtung des Lichtes am Punkt $\vec{p}$.
-		Ist diese rechtwinklig auf die Kugeloberfläche, so haben wir $c=1$, also maximale Helligkeit.
-		Je kleiner der Einfallwinkel des Lichtes, desto kleiner wird $c$, bis schliesslich alle  Punkte auf der der Lichtquelle abgewandten Seite die Helligkeit $c=0$ haben.
-	\end{losung*}
-	\begin{aufgabe}\label{aufg:diffuse_implementation}
-		Öffnen Sie nun das File \texttt{myobject/sphere.py} und implementieren Sie die Funktion \texttt{get\_normal(self, p)}, nach aussen zeigenden Normalenvektor $\vec{n}$ der Lange $1$ am Punkt $\vec{p}$ zurück gibt.
-		Lassen Sie anschliessend das Skript \texttt{examples/example2.py} laufen.
-	\end{aufgabe}
-	\begin{losung*}
-		Die Lösung könnte zum Beipiel so aussehen:
-		\lstinputlisting[linerange=get\_normal\-begin-get\_normal\-end]{../object/sphere.py}
-		Das generierte Bild in Abbildung~\ref{fig:solution_diffuse} sieht schon viel interessanter aus.
-		Die Lichtquelle befindet sich über der Kugel und beleuchtet nur deren obere Hälfte.
-		\begin{figure}[ht]
-			\centering
-			\includegraphics[width=0.5\textwidth]{images/example2.png}
-			\caption{Lösung der Aufgabe~\ref{aufg:diffuse_implementation}.}
-			\label{fig:solution_diffuse}
-		\end{figure}
-	\end{losung*}
+\end{losung*}
 \end{document}
