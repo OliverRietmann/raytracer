@@ -4,10 +4,10 @@ from object.object import Object, normalize
 from object.plane import Plane
 
 class Box(Object):
-    def __init__(self, lower_bound, upper_bound, properties):
+    def __init__(self, lower_bound, upper_bound, **kwargs):
         if not all(l < u for l, u in zip(lower_bound, upper_bound)):
             raise ValueError("lower_bound must be component-wise smaller than upper_bound")
-        super().__init__(properties)
+        super().__init__(**kwargs)
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 

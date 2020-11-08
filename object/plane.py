@@ -3,8 +3,8 @@ from numpy import inf, inner
 from object.object import Object, normalize
 
 class Plane(Object):
-    def __init__(self, n, d, properties):
-        super().__init__(properties)
+    def __init__(self, n, d, **kwargs):
+        super().__init__(**kwargs)
         self.n = n
         self.d = d
 
