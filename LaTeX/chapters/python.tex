@@ -1,0 +1,182 @@
+\section{Eine Einführung in Python 3}\label{sec:einfuerung}
+Nun installieren wir Python (Version 3.8 oder höher) und die von unserem Raytracing-Programm benötigten Packages \texttt{numpy} und \texttt{PIL}.
+Je nach Betriebssystem muss dabei anders vorgegangen werden.
+
+\subsubsection*{Windows 10}
+Gehen Sie auf die offizielle Python-Webseite um von dort die neuste Python Version zu installieren.
+Danach überprüfen wir mit folgenden drei Schritten, ob die Installation erfolgreich war:
+\begin{enumerate}
+	\item Drücken Sie die Windows-Taste um eine Suche zu starten.
+	\item Schreiben Sie dann \texttt{cmd} und drücken Sie Enter um die Kommandozeile zu öffnen.
+	\item In der Kommandozeile schreiben Sie \texttt{python} und drücken wieder Enter.
+\end{enumerate}
+Nun sollte die Version der Python-Installation ausgegeben werden.
+Anschliessend können in der Kommandozeile mit
+\begin{verbatim}
+	python -m pip install numpy Pillow --user
+\end{verbatim}
+die Abhängigkeiten installiert werden.
+Von nun an kann ein Python-Script \texttt{script.py} in der Kommandozeile ausgeführt werden mit dem Befehl \texttt{python script.py}.
+Dazu muss aber zuerst mit dem Befehl \texttt{cd <Verzeichnis>} in das Verzeichnis navigiert werden, welches \texttt{script.py} enthält.
+
+\subsubsection*{MacOS}
+Öffnen Sie einen Terminal, zum Beispliel indem Sie nach der Applikation Terminal suchen.
+Installieren Sie dann Homebrew indem Sie die Zeile (alles soll auf eine Zeile!)
+\begin{verbatim}
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/
+install/master/install.sh)"
+\end{verbatim}
+im den Terminal kopieren und mit Enter ausführen.
+Anschliessend können Sie Python mit dem Befehl \texttt{brew install python} installieren.
+Danach müssen noch mit
+\begin{verbatim}
+	python3 -m pip install numpy Pillow --user
+\end{verbatim}
+die Abhängigkeiten installiert werden.
+Von nun an kann ein Python-Script \texttt{script.py} im Terminal ausgeführt werden mit dem Befehl \texttt{python3 script.py}.
+Dazu muss aber zuerst mit dem Befehl \texttt{cd <Verzeichnis>} in das Verzeichnis navigiert werden, welches \texttt{script.py} enthält.
+
+\subsubsection*{Linux}
+Öffnen Sie einen Terminal.
+Unter Ubuntu wird Python mit dem Befehl \texttt{sudo apt-get install python3} installiert, unter Fedora hingegen mit \texttt{sudo dnf install python3}.
+In beiden Fällen werden Administrator-Rechte benötigt.
+Anschliessend können mit
+\begin{verbatim}
+	python3 -m pip install numpy Pillow --user
+\end{verbatim}
+die Abhängigkeiten installiert werden.
+Von nun an kann ein Python-Script \texttt{script.py} im Terminal ausgeführt werden mit dem Befehl \texttt{python3 script.py}.
+Dazu muss aber zuerst mit dem Befehl \texttt{cd <Verzeichnis>} in das Verzeichnis navigiert werden, welches \texttt{script.py} enthält.
+
+\subsection{Listen und Schleifen}
+Öffnen Sie nun einen beliebigen Texteditor und erstellen Sie ein File namens \texttt{script.py} das nur folgende Zeile enthält:
+\begin{lstlisting}[style=python]
+print("Hello World")
+\end{lstlisting}
+Wenn Sie dieses im Terminal ausführen wie oben beschrieben, sollte die Nachricht \texttt{Hello World} erscheinen.
+Die Endung \texttt{.py} kennzeichnet das File als Python-Skript.
+Mit der Funktion \texttt{print} kann Text, eine Zahl, und vieles mehr im Terminal ausgegeben werden.
+Zum Beispiel können wir eine Liste von Zahlen ausgeben:
+\begin{lstlisting}[style=python]
+l = [4, 2, 5, 9, 6, 2]
+print(l)
+\end{lstlisting}
+Mithilfe der Klammern \texttt{[ ]} haben wir hier die Variable \texttt{l} definiert und schliesslich mit \texttt{print} ausgegeben.
+Mit den Klammern \texttt{[ ]} kann man zudem auf die einzelnen Elemente der Liste zugreifen:
+\begin{lstlisting}[style=python]
+l = [4, 2, 5, 9, 6, 2]
+print(l[0])
+print(l[1])
+print(l[2])
+\end{lstlisting}
+Die \texttt{for} Schleife erlaubt es eine Liste zu durchlaufen:
+\begin{lstlisting}[style=python]
+l = [4, 2, 5, 9, 6, 2]
+for i in l:
+	print(i)
+\end{lstlisting}
+Die Variable \texttt{i} durchläuft alle Werte der Liste \texttt{l}.
+Man beachte, dass die letzte Zeile eingerückt ist.
+Um aus einer Liste von Zahlen einen Vektor zu machen mit dem man rechnen kann, verwenden wir das Package numpy:
+\begin{lstlisting}[style=python]
+from numpy import array
+l = [4, 2, 5, 9, 6, 2]
+v = array(l)
+print(2 * v)
+\end{lstlisting}
+So wird das \texttt{numpy.array}, bzw. der Vektor \texttt{v} mit dem Skalar \texttt{2} multipliziert.
+Man beachte, das die gewöhnliche Liste \texttt{l} diese Operation nicht unterstützt (probieren Sie!).
+Numpy stellt viele weitere Operationen aus der Vektorgeometrie zur Verfügung.
+Wie man auf diese zugreifen kann, schaut man am besten im Internet nach.
+In jedem Fall müssen diese aber zuerst importiert werden, so wie wir \texttt{numpy.array} in in der ersten Zeile importieren mussten.
+Nun folgen noch ein paar wichtige Beispiele:
+\begin{lstlisting}[style=python]
+from numpy import array, inner
+from numpy.linalg import norm
+v = array([1, 2, 3])
+w = array([4, 5, 6])
+print(w - 2 * v)
+print(inner(v, w)) # Skalarprodukt von v und w
+print(norm(v))     # Betrag des Vektors v
+\end{lstlisting}
+Der Hashtag \texttt{\#} markiert einen Kommentar, das heisst alle darauffolgenden Zeichen werden ignoriert.
+
+\subsection{Funktionen und Klassen}
+Funktionen sind ein Weg um Code-Repetition zu verhindern.
+So könnte es zum Beispiel sehr oft nötig sein, einen Vektor zu normieren (das heisst auf Länge 1 zu bringen).
+In diesem Fall lohnt es sich, dafür eine Funktion zu machen:
+\begin{lstlisting}[style=python]
+from numpy import array
+from numpy.linalg import norm
+
+def normalize(v):
+	return v / norm(v)
+
+w = array([1, 2, 3])
+n = normalize(v)
+print(n)
+\end{lstlisting}
+Wir haben also eine Funktion \texttt{normalize} definiert, welche einen beliebigen Vektor (ausser den Nullvektor) auf Länge 1 bringt.
+Wie schon beim der \texttt{for} Schleife ist auch hier die Zeile 5 eingerückt.
+Das Ende dieser Einrückung markiert das Ende der Definition der Funktion.
+Im Gegensatz zu vielen anderen Programmiersprachen hat das einrücken in Python eine syntaktische Bedeutung.
+Ein weiteres wichtiges Konzept ist die \texttt{Klasse}.
+Als Beispiel wollen wir eine Kugel beschreiben.
+Eine Kugel hat zwei definierende Eigenschaften: Einen Mittelpunkt und einen Radius.
+Daraus leiten sich andere Eigenschaften wie zum Beispiel ihr Volumen ab.
+Diese Information lässt sich in Code übersetzen indem man zum Beispiel eine Klasse \texttt{Sphere} definiert:
+\begin{lstlisting}[style=python]
+from numpy import pi
+
+class Sphere:
+	def __init__(self, m, r):
+		self.m = m
+		self.r = r
+
+	def volume(self):
+		return 4 * pi * self.r**3 / 3
+\end{lstlisting}
+Dieser Klasse geben wir die zwei Funktionen \texttt{\_\_init\_\_} und \texttt{volume}.
+Ersteres setzt die Member-Variablen \texttt{m} und \texttt{r}, welche wir als Mittelpunkt bzw. als Radius interpretieren.
+Member-Funktionen wie \texttt{volume} können diese dann verwenden.
+Ähnlich wie zuvor bei den Funktionen kann der weitere Code diese Klasse wiederverwenden:
+\begin{lstlisting}[style=python]
+from numpy import array, pi
+
+class Sphere:
+	def __init__(self, m, r):
+		self.m = m
+		self.r = r
+
+	def volume(self):
+		return 4 * pi * self.r**3 / 3
+
+# Eine Kugel um [0, 0, 1] mit Radius 2
+sphere = Sphere(array([0, 0, 1]), 2)
+
+print("Mittelpunkt:", sphere.r)
+print("Radius:", sphere.r)
+print("Volumen: ", sphere.volume())
+\end{lstlisting}
+Mit dem Punkt \texttt{.} kann auf die Member-Variablen und Member-Funktionen zugegriffen werden.
+Python Files können Funktionen und Klassen von anderen Files im selben Verzeichnis importieren.
+Sagen wir im File \texttt{normalize.py} sei die Funktion \texttt{normalize} definiert worden und im File \texttt{sphere.py} sei die Klasse \texttt{Sphere} definiert worden.
+Ein drittes File (im selben Verzeichnis wie die anderen beiden) könnte dann zum Beispiel so aussehen:
+\begin{lstlisting}[style=python]
+from numpy import array
+from normalize import normalize
+from sphere import Sphere
+
+w = array([1, 2, 3])
+n = normalize(v)
+print(n)
+
+# Eine Kugel um [0, 0, 1] mit Radius 2
+sphere = Sphere(array([0, 0, 1]), 2)
+
+print("Mittelpunkt:", sphere.r)
+print("Radius:", sphere.r)
+print("Volumen: ", sphere.volume())
+\end{lstlisting}
+Auf diese Weise kann ein einziges Programm in viele verschiedene Files aufgeteilt werden.
+Damit beenden wir unsere Einführung und vertrauen darauf, dass der Leser sich weitere Programmierkenntnisse selber aneignet, wenn er sie denn benötigen sollte.
