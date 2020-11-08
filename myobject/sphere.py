@@ -1,11 +1,11 @@
 from numpy import array, inf, inner, sqrt
 
-from object.object import Object, normalize
+from myobject.object import Object, normalize
 
 
 class Sphere(Object):
-    def __init__(self, m, r, properties):
-        super().__init__(properties)
+    def __init__(self, m, r, **kwargs):
+        super().__init__(**kwargs)
         self.m = m
         self.r = r
 

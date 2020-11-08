@@ -2,7 +2,7 @@ from numpy import array, pi
 
 from core.camera import Camera
 from core.renderer import Renderer
-from object.sphere import Sphere
+from myobject.sphere import Sphere
 
 # Platziere eine Kamera im Punkt [-1.0, 0.0, 1.0] welche in Richtung
 # des Punktes [0.0, 0.0, 1.0] schaut.
