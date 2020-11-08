@@ -35,17 +35,17 @@ class Object:
         # diffuse
         if self.properties.diffuse > 0.0:
             for lightsource in lightsource_list:
-                lightray = Ray(lightsource, p - lightsource)
-                nearest_obstacle, t = get_nearest_obstacle(lightray, object_list)
-                if nearest_obstacle is not None and nearest_obstacle.id == self.id:
-                    diffuse_coefficient = -inner(normal, normalize(lightray.direction))
+                shadowray = Ray(p, lightsource - p)
+                nearest_obstacle, t = get_nearest_obstacle(shadowray, object_list)
+                if t > 1.0 + 1.0e-15:
+                    diffuse_coefficient = inner(normal, normalize(shadowray.direction))
                     diffuse_coefficient = clip(diffuse_coefficient, 0.0, 1.0)
                     color += self.properties.diffuse * diffuse_coefficient * self.properties.color
 
                     # Phong
                     if self.properties.phong[0] > 0.0 and self.properties.phong[1] > 0:
-                        reflected = normalize(reflect(lightray.direction))
-                        factor = -inner(reflected, normalize(d))
+                        reflected = normalize(reflect(shadowray.direction))
+                        factor = inner(reflected, normalize(d))
                         if factor > 0.0:
                             color += self.properties.phong[0] * factor**self.properties.phong[1] * array([1.0, 1.0, 1.0])
 

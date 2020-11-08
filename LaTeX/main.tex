@@ -289,7 +289,7 @@ Allerdings kennt diese Implementierung noch keine Objekte wie Kugeln, Würfel, E
 Hier kommen Sie als Leser ins Spiel.
 Sie werden unter Anleitung diese fehlenden Teile ergänzen.
 Es geht darum dem Raytracing-Programm zu sagen, was zum Beispiel eine Kugel ist, wie man deren Schnittpunkt mit einem Strahl berechnet und vieles mehr.
-Laden Sie dazu die Python-Codes unter \url{https://gitlab.math.ethz.ch/rioliver/raytracing} herunter.
+Laden Sie dazu unter \url{https://gitlab.math.ethz.ch/rioliver/raytracing} die Python-Codes herunter.
 Um zu testen ob alles funktioniert, können Sie dann das File \texttt{main.py} ausführen. Dies sollte das Bild aus Abbildung~\ref{fig:goal} generieren.
 \begin{figure}[h!]
 	\centering
@@ -298,7 +298,7 @@ Um zu testen ob alles funktioniert, können Sie dann das File \texttt{main.py} a
 	\label{fig:goal}
 \end{figure}
 
-\section{Die Kugel}
+\subsection{Die Kugel}
 Als Einstieg generieren wir ein Bild bestehend aus folgender Szene:
 Eine Kamera befindet sich an den Koordinaten $(-1,0,1)$ und schaut in Richtung des Punktes $(0,0,1)$, das heisst entlang der x-Achse.
 Zudem platzieren wir eine Kugel mit Mittelpunkt $(1,0,1)$ und Radius $1$.
@@ -315,8 +315,10 @@ Man betrachte dazu Abbildung~\ref{fig:sphere_intersect}.
 	\label{fig:sphere_intersect}
 \end{figure}
 \begin{aufgabe}\label{aufg:intersect_theory}
-	Gegeben Sei ein Strahl mit Ursprung $\vec{v}$ und Richtung $\vec{w}$.
-	Überlegen Sie sich die Kugel mit Mittelpunkt $\vec{m}$ und Radius $r$ schneidet.
+	Gegeben sei eine Kugel mit Mittelpunkt $\vec{m}$ und Radius $r>0$, sowie ein Strahl mit Ursprung $\vec{v}$ und Richtung $\vec{w}$.
+	Der Strahl besteht also aus der Menge aller Punkte der Form $\vec{v}+t\vec{w}$ für ein $t>0$.
+	Sie dürfen dabei annehmen, dass $\vec{w}$ nicht der Nullvektor ist.
+	Wie kann man entscheiden, ob der Strahl die Kugel schneidet?
 	Wie erhalten Sie in diesem Fall den Parameter $t>0$, so dass $\vec{v}+t\vec{w}$ gerade dem näherem der beiden Schnittpunkte entspricht?
 \end{aufgabe}
 \begin{losung*}
@@ -374,28 +376,36 @@ Diese wollen wir nun in die Berechnung der Farbwerte miteinbeziehen:
 Die Punkte auf der Kugeloberfläche, welche der Lichtquelle zugewandt sind, sollen heller sein.
 Die wichtigsten Begriffe sind das \textit{Skalarprodukt} und der \textit{Normalenvektor} auf die Kugeloberfläche.
 Man betrachte dazu Abbildung~\ref{fig:sphere_diffuse}.
-Diese zeigt eine punktförmige Lichtquelle am Ort $\vec{v}$.
-Wir wollen den Farbwert am Punkt $\vec{p}$ auf der Kugel berechnen. Der Vektor $\vec{n}$ an diesem Punkt soll rechtwinklig zur Kugeloberfläche sein, nach aussen Zeigen und Länge $1$ haben. Wir nennen $\vec{n}$ den Normalenvektor auf die Kugel im Punkt $\vec{p}$.
+Diese zeigt eine punktförmige Lichtquelle am Ort $\vec{l}$.
+Wir wollen den Farbwert am Punkt $\vec{p}$ auf der Kugel berechnen.
+Der Vektor $\vec{n}$ an diesem Punkt soll rechtwinklig zur Kugeloberfläche sein, nach aussen Zeigen und Länge $1$ haben.
+Wir nennen $\vec{n}$ den Normalenvektor auf die Kugel im Punkt $\vec{p}$.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.5\textwidth]{images/sphere_diffuse.pdf}
 	\caption{Die Kugel wird von einer Punktförmigen Lichtquelle in $\vec{v}$ beleuchtet.}
 \label{fig:sphere_diffuse}
 \end{figure}
-Wir ordnen dem Punkt $\vec{p}$ eine Zahl $c\in\left[0,1\right]$ zu, welche die Helligkeit an diesem Punkt beschreibt.
-Dabei bedeutet $c=1$ maximale Helligkeit und $c=0$ minimale Helligkeit, also Schwarz:
+Wir ordnen dem Punkt $\vec{p}$ eine Zahl $c\in\left[0,1\right]$ zu, welche die \glqq Helligkeit\grqq an diesem Punkt beschreibt.
+Dabei bedeutet $c=1$ maximale Helligkeit und $c=0$ minimale Helligkeit, also schwarz:
 \begin{equation}\label{eq:diffuse_coefficient}
-	c=\max\left(-\vec{n}\cdot\vec{w}, 0\right),\quad
-	\vec{w}=\frac{\vec{p}-\vec{v}}{\lVert\vec{p}-\vec{v}\rVert}.
+	c=\max\left(\vec{n}\cdot\vec{w}, 0\right),\quad
+	\vec{w}=\frac{\vec{l}-\vec{p}}{\lVert\vec{l}-\vec{p}\rVert}.
 \end{equation}
 \begin{aufgabe}\label{aufg:diffuse_coefficient}
-	Warum misst $c$ in Gleichung~\eqref{eq:diffuse_coefficient} die Helligkeit? Erklären Sie.
+	Überlegen Sie sich qualitativ, welche Punkte $\vec{p}$ auf der Kugeloberfläche welchen Wert für $c$ zugeordnet bekommen.
+	Welche Punkte auf der Kugeloberfläche werden als \glqq hell\grqq{} und welche als \glqq dunkel\grqq{} erscheinen?
 \end{aufgabe}
 \begin{losung*}
-	Da sowohl $\vec{n}$ als auch $\vec{w}$ Länge $1$ haben, gilt wie verlangt $c\in\left[0,1\right]$.
-	Der Vektor $\vec{w}$ beschreibt gerade die Einfallsrichtung des Lichtes am Punkt $\vec{p}$.
-	Ist diese rechtwinklig auf die Kugeloberfläche, so haben wir $c=1$, also maximale Helligkeit.
-	Je kleiner der Einfallwinkel des Lichtes, desto kleiner wird $c$, bis schliesslich alle  Punkte auf der der Lichtquelle abgewandten Seite die Helligkeit $c=0$ haben.
+	Da sowohl $\vec{n}$ als auch $\vec{w}$ Länge $1$ haben, gilt
+	\begin{equation*}
+		\cos\left(\alpha\right)=\vec{n}\cdot\vec{w},
+	\end{equation*}
+	wobei $\alpha$ der Zwischenwinkel von $\vec{n}$ und $\vec{w}$ ist.
+	Da der Kosinus nur Werte in $\left[-1,1\right]$ annimmt, gilt wie verlangt $c\in\left[0,1\right]$.
+	Die Helligkeit hängt also vom Einfallswinkel des Lichtes ab:
+	Scheint das Licht rechtwinklig auf die Kugeloberfläche im Punkt $\vec{p}$, so haben wir $\alpha=0$ und damit $c=1$, also maximale Helligkeit.
+	Je flacher der Einfallwinkel des Lichtes, desto kleiner wird $c$, bis schliesslich alle  Punkte auf der der Lichtquelle abgewandten Seite die Helligkeit $c=0$ haben.
 \end{losung*}
 \begin{aufgabe}\label{aufg:diffuse_implementation}
 	Öffnen Sie nun das File \texttt{myobject/sphere.py} und implementieren Sie die Funktion \texttt{get\_normal(self, p)}, nach aussen zeigenden Normalenvektor $\vec{n}$ der Lange $1$ am Punkt $\vec{p}$ zurück gibt.
