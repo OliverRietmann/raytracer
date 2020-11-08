@@ -9,20 +9,14 @@ def normalize(vector):
 
 class Object:
     max_recursion_depth = 5
-    counter = 0
 
     def __init__(self, properties):
         self.properties = properties
-        self.id = Object.counter
-        Object.counter += 1
 
     def intersect(self, ray):
         pass
 
     def get_normal(self, p):
-        pass
-
-    def transform(self, matrix):
         pass
 
     def shader(self, p, d, lightsource_list, object_list, recursion_depth=1):
