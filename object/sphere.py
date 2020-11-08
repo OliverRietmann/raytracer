@@ -10,15 +10,20 @@ class Sphere(Object):
 
     #---intersect-begin---
     def intersect(self, ray):
+        # Der Strahl ist beschrieben durch v+t*w mit t>0
         v = ray.origin
         w = ray.direction
 
+        # Berechung der Koeffizienten der quadratischen Gleichung
         a = inner(w, w)
         mv = v - self.m
         b = 2.0 * inner(w, mv)
         c = inner(mv, mv) - self.r**2
+
+        # Diskriminante
         d = b**2 - 4.0 * a * c
 
+        # Fallunterscheidung: Schneidet der Strahl die Kugel?
         if d >= 0.0:
             t0 = (-b - sqrt(d)) / (2.0 * a)
             if t0 > 0.0 and inner(ray(t0) - self.m, w) < 0.0:
@@ -26,6 +31,8 @@ class Sphere(Object):
             t1 = (-b + sqrt(d)) / (2.0 * a)
             if t1 > 0.0 and inner(ray(t1) - self.m, w) < 0.0:
                 return t1
+
+        # Falls kein Schnittpunkt existert, retourniere "unendlich"
         return inf
     #---intersect-end---
 
