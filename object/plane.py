@@ -1,3 +1,4 @@
+#---plane-begin---
 from numpy import inf, inner
 
 from object.object import Object, normalize
@@ -5,24 +6,25 @@ from object.object import Object, normalize
 class Plane(Object):
     def __init__(self, n, d, **kwargs):
         super().__init__(**kwargs)
-        self.n = n
-        self.d = d
+        self.n = n # Normalenvektor n aus der Ebenengleichung
+        self.d = d # Parameter d aus der Ebenengleichung
 
-    #---intersect-begin---
     def intersect(self, ray):
+        # Der Strahl ist beschrieben durch v+t*w mit t>0
         v = ray.origin
         w = ray.direction
 
+        # Falls der Strahl von "aussen" kommt, berechne s
         nw = inner(self.n, w)
         if nw < 0.0:
-            t = -1.0 * (self.d + inner(self.n, v)) / nw
-            if t > 0.0:
-                return t
+            s = -1.0 * (self.d + inner(self.n, v)) / nw
+            if s > 0.0:
+                return s
 
+        # Falls kein zulässiger Schnittpunkt existiert,
+        # wird "unendlich" zurückgegeben.
         return inf
-    #---intersect-end---
 
-    #---get_normal-begin---
     def get_normal(self, p):
         return normalize(self.n)
-    #---get_normal-end---
+#---plane-end---
