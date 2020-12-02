@@ -1,4 +1,4 @@
-from numpy import array, clip, inner
+from numpy import array, clip, inner, pi
 from numpy.linalg import norm
 
 from core.ray import Ray
@@ -45,7 +45,9 @@ class Object:
                         reflected = normalize(reflect(shadowray.direction))
                         factor = inner(reflected, normalize(d))
                         if factor > 0.0:
-                            color += self.phong[0] * factor**self.phong[1] * array([1.0, 1.0, 1.0])
+                            n = self.phong[1]
+                            normalizer = (n + 2) / (2.0 * pi)
+                            color += self.phong[0] * normalizer * factor**n * array([1.0, 1.0, 1.0])
 
         # reflection
         if self.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
