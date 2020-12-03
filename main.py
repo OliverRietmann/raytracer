@@ -6,7 +6,6 @@ from numpy import array, pi
 
 from core.camera import Camera
 from core.renderer import Renderer
-from core.properties import Properties
 
 from object.box import Box
 from object.plane import Plane
@@ -25,7 +24,7 @@ sphere_red = Sphere(array([4.0, -2.0, 0.0]), 1.0, color=red, ambient=0.2, diffus
 
 purple = array([148.0 / 255.0, 0.0, 211.0 / 255.0])
 sphere_purple = Sphere(array([6.0, 2.0, 1.0]), 2.0,
-                color=purple, ambient=0.2, diffuse=0.2, phong=[1.0, 30], reflection=0.6)
+                color=purple, ambient=0.2, diffuse=0.2, phong=[0.2, 40], reflection=0.6)
 
 blue = array([0.0, 0.0, 1.0])
 box_blue = Box(array([-0.5, -3.0, -1.0]), array([0.5, -2.0, 0.0]),
