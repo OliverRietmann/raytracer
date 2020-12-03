@@ -1,7 +1,6 @@
-#---plane-begin---
 from numpy import inf, inner
 
-from object.object import Object, normalize
+from myobject.object import Object, normalize
 
 class Plane(Object):
     def __init__(self, n, d, **kwargs):
@@ -26,4 +25,3 @@ class Plane(Object):
 
     def get_normal(self, p):
         return normalize(self.n)
-#---plane-end---

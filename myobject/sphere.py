@@ -9,7 +9,6 @@ class Sphere(Object):
         self.m = m
         self.r = r
 
-    #---BEGIN intersect---
     def intersect(self, ray):
         v = ray.origin
         w = ray.direction
@@ -24,9 +23,7 @@ class Sphere(Object):
         """
 
         return inf
-    #---END intersect---
 
-    #---BEGIN get_normal---
     def get_normal(self, p):
         """
         Ersetzen Sie das 'return' statement unten durch
@@ -35,4 +32,3 @@ class Sphere(Object):
         Normalenvektor auf der Kugel am Punkt p zurück.
         """
         return array([0.0, 0.0, 0.0])
-    #---BEGIN get_normal---
