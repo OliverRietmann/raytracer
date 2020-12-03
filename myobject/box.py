@@ -1,6 +1,6 @@
 from numpy import argmax, array, inf, sign
 
-from object.object import Object
+from myobject.object import Object
 
 class Box(Object):
     def __init__(self, lower_bound, upper_bound, **kwargs):
@@ -10,7 +10,6 @@ class Box(Object):
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 
-    #---intersect-begin---
     def intersect(self, ray):
         v = ray.origin
         w = ray.direction
@@ -38,20 +37,14 @@ class Box(Object):
             return max(tmin)
 
         return inf # Kein Schnittpunkt
-    #---intersect-end---
 
-    #---get_normal-begin---
     def get_normal(self, p):
-        # Zentrum des Quaders
-        c = 0.5 * (self.lower_bound + self.upper_bound)
-        edges = self.upper_bound - self.lower_bound
-
-        # Transformiere den Schnittpunkt in den Würfel [-0.5, 0.5]^3
-        p_rel = (p - c) / edges
-
-        # Welcher Seite liegt der Punkt am nächsten?
-        i = argmax(abs(p_rel))
-        n = array([0.0, 0.0, 0.0])
-        n[i] = sign(p_rel[i])
-        return n
-    #---get_normal-end---
+        """
+        Ersetzen Sie das 'return' statement unten durch
+        Ihren Code: Sei p ein Punkt auf dem Quader.
+        Geben Sie den nach aussen zeigenden, normierten
+        Normalenvektor auf dem Quader am Punkt p zurück.
+        Die beiden definierenden Ecken sind durch
+        self.lower_bound und self.upper_bound abrufbar.
+        """
+        return array([0.0, 0.0, 0.0])
