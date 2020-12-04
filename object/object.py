@@ -36,10 +36,10 @@ class Object:
         # Beleuchtungsmodell nach Phong
         if self.diffuse > 0.0 and len(lightsource_list) > 0:
             for lightsource in lightsource_list:
-                shadowray = Ray(p, lightsource - p)
-                l = normalize(shadowray.direction)
-                nearest_obstacle, t = get_nearest_obstacle(shadowray, object_list)
-                if t > 1.0:
+                lightray = Ray(lightsource, p - lightsource)
+                l = -normalize(lightray.direction)
+                nearest_obstacle, t = get_nearest_obstacle(lightray, object_list)
+                if t + 1.0e-10 > 1.0 and nearest_obstacle is self:
                     # diffuse Reflexion
                     diffuse_intensity = max(0.0,  inner(n, l))
                     color += self.diffuse * diffuse_intensity * self.color
@@ -53,7 +53,7 @@ class Object:
                             specular_intensity = (m + 2) / (2.0 * pi) * factor**m
                             color += self.phong[0] * specular_intensity * array([1.0, 1.0, 1.0])
 
-        # Reflektion
+        # perfekte Reflexion
         if self.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
             reflection_ray = Ray(p, reflect(c))
             obj, t = get_nearest_obstacle(reflection_ray, object_list)
