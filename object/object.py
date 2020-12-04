@@ -1,4 +1,4 @@
-from numpy import array, clip, inner, pi
+from numpy import array, inner, pi
 from numpy.linalg import norm
 
 from core.ray import Ray
@@ -24,34 +24,38 @@ class Object:
         pass
 
     def shader(self, p, d, lightsource_list, object_list, recursion_depth=1):
-        normal = self.get_normal(p)
-        reflect = lambda incoming: incoming - 2.0 * inner(normal, incoming) * normal
+        c = -normalize(d)       # Richtung aus der der Strahl gekommen ist
+        n = self.get_normal(p)  # Normalenvektor am Punkt p
 
-        # ambient
+        # Funktion, die einen Vektor an der Normale n spiegelt
+        reflect = lambda v: 2.0 * inner(n, v) * n - v
+
+        # ambiente Beleuchtung
         color = self.ambient * self.color
 
-        # diffuse
+        # Beleuchtungsmodell nach Phong
         if self.diffuse > 0.0 and len(lightsource_list) > 0:
             for lightsource in lightsource_list:
                 shadowray = Ray(p, lightsource - p)
+                l = normalize(shadowray.direction)
                 nearest_obstacle, t = get_nearest_obstacle(shadowray, object_list)
-                if t > 1.0 + 1.0e-15:
-                    diffuse_coefficient = inner(normal, normalize(shadowray.direction))
-                    diffuse_coefficient = clip(diffuse_coefficient, 0.0, 1.0)
-                    color += self.diffuse * diffuse_coefficient * self.color
+                if t > 1.0:
+                    # diffuse Reflexion
+                    diffuse_intensity = max(0.0,  inner(n, l))
+                    color += self.diffuse * diffuse_intensity * self.color
 
-                    # Phong
+                    # spiegelnde Reflexion
                     if self.phong[0] > 0.0 and self.phong[1] > 0:
-                        reflected = normalize(reflect(shadowray.direction))
-                        factor = inner(reflected, normalize(d))
+                        l_reflected = reflect(l)
+                        factor = inner(l_reflected, c)
                         if factor > 0.0:
-                            n = self.phong[1]
-                            normalizer = (n + 2) / (2.0 * pi)
-                            color += self.phong[0] * normalizer * factor**n * array([1.0, 1.0, 1.0])
+                            m = self.phong[1]
+                            specular_intensity = (m + 2) / (2.0 * pi) * factor**m
+                            color += self.phong[0] * specular_intensity * array([1.0, 1.0, 1.0])
 
-        # reflection
+        # Reflektion
         if self.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
-            reflection_ray = Ray(p, reflect(d))
+            reflection_ray = Ray(p, reflect(c))
             obj, t = get_nearest_obstacle(reflection_ray, object_list)
             if obj is not None:
                 reflection_color = obj.shader(reflection_ray(t), reflection_ray.direction, \
