@@ -37,13 +37,18 @@ class Object:
     #---_specular_shader-end---
 
     #---_reflection_shader-begin---
-    def _reflection_shader(self, c, n, p, args):
-            c_reflected = 2.0 * inner(n, c) * n - c
-            obj, t = get_nearest_obstacle(p, c_reflected, args[1])
+    def _reflection_shader(self, c, n, p, lightsource_list, object_list, recursion_depth):
+            # Gespiegelter Strahl v+t*w, t>0
+            v = p
+            w = 2.0 * inner(n, c) * n - c
+            # Ermittle das getroffene Objekt obj und den Parameter t
+            obj, t = get_nearest_obstacle(v, w, object_list)
             if obj is None:
-                return array([0.0, 0.0, 0.0])   # schwarz
+                # Wenn kein Objekt getroffen wird: schwarz
+                return array([0.0, 0.0, 0.0])
             else:
-                reflection_color = obj.shader(p + t * c_reflected, c_reflected, *args)
+                # Berechne die Farbe am Punkt v + t * w
+                reflection_color = obj.shader(v + t * w, w, lightsource_list, object_list, recursion_depth - 1)
                 return self.reflection * reflection_color * self.color
     #---_reflection_shader-end---
 
@@ -72,8 +77,7 @@ class Object:
 
         # perfekte Reflexion
         if self.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
-            args = (lightsource_list, object_list, recursion_depth - 1)
-            color += self._reflection_shader(c, n, p, args)
+            color += self._reflection_shader(c, n, p, lightsource_list, object_list, recursion_depth)
 
         return color
     #---shader-end---
