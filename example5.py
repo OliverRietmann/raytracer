@@ -9,7 +9,7 @@ from object.sphere import Sphere
 camera = Camera(array([-7.5, -4.3, 3.0]), array([0.0, 0.0, 1.0]), 0.25 * pi, 640, 480)
 renderer = Renderer(camera)
 
-lightsource = array([1.0, -7.0, 10.0])
+lightsource = array([0.0, 0.0, 10.0])
 
 black = array([0.0, 0.0, 0.0])
 white = array([1.0, 1.0, 1.0])
@@ -37,10 +37,11 @@ plane1 = Plane(array([-1.0, 0.0, 0.0]), 6.0, color=gray, ambient=0.2, diffuse=0.
 plane2 = Plane(array([0.0, -1.0, 0.0]), 6.0, color=gray, ambient=0.2, diffuse=0.8)
 plane3 = Plane(array([1.0, 0.0, 0.0]), 5.0, color=gray, ambient=0.2, diffuse=0.8)
 plane4 = Plane(array([0.0, 1.0, 0.0]), 5.0, color=gray, ambient=0.2, diffuse=0.8)
-plane_list = [plane1, plane2, plane3, plane4]
+plane5 = Plane(array([0.0, 0.0, -1.0]), 12.0, color=gray, ambient=0.2, diffuse=0.8)
+plane_list = [plane1, plane2, plane3, plane4, plane5]
 
-sphere = Sphere(array([2.0, 2.0, 1.0]), 1, color=white, ambient=0.0, reflection=1.0)
+sphere = Sphere(array([0.0, 2.0, 1.0]), 1, color=white, ambient=0.0, reflection=1.0)
 sphere_list = [sphere]
 
-renderer([lightsource], box_list + plane_list + sphere_list)
+renderer([lightsource], box_list + plane_list + sphere_list, 3.0)
 renderer.save_image("example5.png")
