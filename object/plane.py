@@ -9,10 +9,8 @@ class Plane(Object):
         self.n = n # Normalenvektor n aus der Ebenengleichung
         self.d = d # Parameter d aus der Ebenengleichung
 
-    def intersect(self, ray):
+    def intersect(self, v, w):
         # Der Strahl ist beschrieben durch v+t*w mit t>0
-        v = ray.origin
-        w = ray.direction
 
         # Falls der Strahl von "aussen" kommt, berechne s
         nw = inner(self.n, w)

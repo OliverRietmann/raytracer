@@ -1,8 +1,6 @@
 from numpy import array, cross, tan
 from numpy.linalg import norm
 
-from core.ray import Ray
-
 def normalize(vector):
     return vector / norm(vector)
 
@@ -16,12 +14,14 @@ class Camera:
 
     def get_ray_indices(self):
         direction = normalize(self.look_at - self.position)
-        w = normalize(cross(direction, array([0.0, 0.0, 1.0])))
-        h = cross(direction, w)
+        width = normalize(cross(direction, array([0.0, 0.0, 1.0])))
+        height = cross(direction, width)
         pixelsize = 2.0 * tan(0.5 * self.angle) / self.pixels_x;
         
         for i in range(self.pixels_y):
-            dy = (i - 0.5 * (self.pixels_y - 1)) * pixelsize * h
+            dy = (i - 0.5 * (self.pixels_y - 1)) * pixelsize * height
             for j in range(self.pixels_x):
-                dx = (j - 0.5 * (self.pixels_x - 1)) * pixelsize * w
-                yield (Ray(self.position, direction + dx + dy), i, j)
+                dx = (j - 0.5 * (self.pixels_x - 1)) * pixelsize * width
+                v = self.position
+                w = direction + dx + dy
+                yield (v, w, i, j)
