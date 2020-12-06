@@ -5,12 +5,11 @@ from myobject.object import Object, normalize
 class Plane(Object):
     def __init__(self, n, d, **kwargs):
         super().__init__(**kwargs)
-        self.n = n
-        self.d = d
+        self.n = n # Normalenvektor n aus der Ebenengleichung
+        self.d = d # Parameter d aus der Ebenengleichung
 
-    def intersect(self, ray):
-        v = ray.origin
-        w = ray.direction
+    def intersect(self, v, w):
+        # Der Strahl ist beschrieben durch v+t*w mit t>0
 
         """
         Ersetzen Sie diesen Kommentar durch Ihren Code:

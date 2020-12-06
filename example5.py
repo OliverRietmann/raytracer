@@ -40,8 +40,9 @@ plane4 = Plane(array([0.0, 1.0, 0.0]), 5.0, color=gray, ambient=0.2, diffuse=0.8
 plane5 = Plane(array([0.0, 0.0, -1.0]), 12.0, color=gray, ambient=0.2, diffuse=0.8)
 plane_list = [plane1, plane2, plane3, plane4, plane5]
 
-sphere = Sphere(array([0.0, 2.0, 1.0]), 1, color=white, ambient=0.0, reflection=1.0)
-sphere_list = [sphere]
+sphere1 = Sphere(array([0.0, 2.0, 1.0]), 1, color=white, ambient=0.0, reflection=1.0)
+sphere2 = Sphere(array([0.0, -2.0, 1.0]), 1, color=white, ambient=0.0, reflection=1.0)
+sphere_list = [sphere1, sphere2]
 
 renderer([lightsource], box_list + plane_list + sphere_list, 3.0)
 renderer.save_image("example5.png")

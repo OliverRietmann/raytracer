@@ -9,9 +9,8 @@ class Sphere(Object):
         self.m = m
         self.r = r
 
-    def intersect(self, ray):
-        v = ray.origin
-        w = ray.direction
+    def intersect(self, v, w):
+        # Der Strahl ist beschrieben durch v+t*w mit t>0
 
         """
         Ersetzen Sie diesen Kommentar durch Ihren Code:

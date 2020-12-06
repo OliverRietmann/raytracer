@@ -1,4 +1,4 @@
-from numpy import array, inner, pi
+from numpy import array, inf, inner, pi
 from numpy.linalg import norm
 
 from core.tracer import get_nearest_obstacle
@@ -43,7 +43,7 @@ class Object:
             w = 2.0 * inner(n, c) * n - c
             # Ermittle das getroffene Objekt obj und den Parameter t
             obj, t = get_nearest_obstacle(v, w, object_list)
-            if obj is None:
+            if t == inf:
                 # Wenn kein Objekt getroffen wird: schwarz
                 return array([0.0, 0.0, 0.0])
             else:

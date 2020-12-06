@@ -10,9 +10,8 @@ class Box(Object):
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 
-    def intersect(self, ray):
-        v = ray.origin
-        w = ray.direction
+    def intersect(self, v, w):
+        # Der Strahl ist beschrieben durch v+t*w mit t>0
 
         p = self.lower_bound
         q = self.upper_bound
