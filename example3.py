@@ -19,5 +19,5 @@ green = array([0.0, 1.0, 0.0])
 # Normalenvektor n = [0.0, 0.0, 1.0] und d = 0.0 in grün.
 plane = Plane(array([0.0, 0.0, 1.0]), 0.0, color=green, ambient=0.2, diffuse=0.8)
 
-renderer([lightsource], [sphere, plane], 0.0)
+renderer([lightsource], [sphere, plane], photo_exposure=0.0)
 renderer.save_image("example3.png")

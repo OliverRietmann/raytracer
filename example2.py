@@ -14,5 +14,5 @@ lightsource = array([0.0, 0.0, 10.0])
 sphere = Sphere(array([5.0, 0.0, 1.0]), 1.0, ambient=0.0, diffuse=1.0)
 
 # Neu: Dem Renderer wird nun auch die Lichtquelle übergeben
-renderer([lightsource], [sphere], 0.0)
+renderer([lightsource], [sphere], photo_exposure=0.0)
 renderer.save_image("example2.png")
