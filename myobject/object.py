@@ -40,9 +40,9 @@ class Object:
         """
         return array([0.0, 0.0, 0.0])
 
-    def shader(self, p, d, lightsource_list, object_list, recursion_depth=1):
-        c = -normalize(d)       # Richtung aus der der Strahl gekommen ist
-        n = self.get_normal(p)  # Normalenvektor am Punkt p
+    def shader(self, p, c, lightsource_list, object_list, recursion_depth=5):
+        c = normalize(c)       # Richtung aus der der Strahl gekommen ist
+        n = self.get_normal(p) # Normalenvektor am Punkt p
 
         # ambiente Beleuchtung
         color = self.ambient * self.color
@@ -61,7 +61,7 @@ class Object:
                     color += self.diffuse * Object._diffuse_shader(l, n) * self.color
 
         # perfekte Reflexion
-        if self.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
-            color += self.reflection * Object._reflection_shader(c, n, p, lightsource_list, object_list, recursion_depth) * self.color
+        if self.reflection > 0.0 and recursion_depth > 0:
+            color += self.reflection * Object._reflection_shader(c, n, p, lightsource_list, object_list, recursion_depth - 1) * self.color
 
         return color

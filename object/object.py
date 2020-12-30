@@ -7,8 +7,6 @@ def normalize(vector):
     return vector / norm(vector)
 
 class Object:
-    max_recursion_depth = 5
-
     def __init__(self, color=array([1.0, 0.0, 0.0]), ambient=1.0, diffuse=0.0, reflection=0.0):
         self.color = color
         self.ambient = ambient
@@ -30,23 +28,22 @@ class Object:
     #---_reflection_shader-begin---
     @staticmethod
     def _reflection_shader(c, n, p, lightsource_list, object_list, recursion_depth):
-            # Gespiegelter Strahl v + t * w, t > 0
-            v = p
-            w = 2.0 * inner(n, c) * n - c
-            # Ermittle das getroffene Objekt obj und den Parameter t
-            obj, t = get_nearest_obstacle(v, w, object_list)
+            # Gespiegelter Strahl p + t * c_prime, t > 0
+            c_prime = 2.0 * inner(n, c) * n - c
+            # Ermittle das getroffene Objekt obj und den Schnittpunkt-Parameter t
+            obj, t = get_nearest_obstacle(p, c_prime, object_list)
             if t == inf:
                 # Wenn kein Objekt getroffen wird: schwarz
                 return array([0.0, 0.0, 0.0])
             else:
                 # Berechne die Farbe am Punkt v + t * w
-                return obj.shader(v + t * w, w, lightsource_list, object_list, recursion_depth - 1)
+                return obj.shader(p + t * c_prime, -c_prime, lightsource_list, object_list, recursion_depth)
     #---_reflection_shader-end---
 
     #---shader-begin---
-    def shader(self, p, d, lightsource_list, object_list, recursion_depth=1):
-        c = -normalize(d)       # Richtung aus der der Strahl gekommen ist
-        n = self.get_normal(p)  # Normalenvektor am Punkt p
+    def shader(self, p, c, lightsource_list, object_list, recursion_depth=5):
+        c = normalize(c)       # Richtung aus der der Strahl gekommen ist
+        n = self.get_normal(p) # Normalenvektor am Punkt p
 
         # ambiente Beleuchtung
         color = self.ambient * self.color
@@ -65,8 +62,8 @@ class Object:
                     color += self.diffuse * Object._diffuse_shader(l, n) * self.color
 
         # perfekte Reflexion
-        if self.reflection > 0.0 and Object.max_recursion_depth > recursion_depth:
-            color += self.reflection * Object._reflection_shader(c, n, p, lightsource_list, object_list, recursion_depth) * self.color
+        if self.reflection > 0.0 and recursion_depth > 0:
+            color += self.reflection * Object._reflection_shader(c, n, p, lightsource_list, object_list, recursion_depth - 1) * self.color
 
         return color
     #---shader-end---

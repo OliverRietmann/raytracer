@@ -13,7 +13,7 @@ class Renderer:
         for v, w, i, j in self.camera.get_ray_indices():
             obj, t = get_nearest_obstacle(v, w, object_list)
             if obj is not None:
-                self.rgb_data[i, j] = obj.shader(v + t * w, w, lightsource_list, object_list)
+                self.rgb_data[i, j] = obj.shader(v + t * w, -w, lightsource_list, object_list)
         if photo_exposure > 0.0:
             self.rgb_data[:, :] = ones_like(self.rgb_data[:, :]) - exp(-self.rgb_data[:, :] * photo_exposure)
 
